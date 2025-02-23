@@ -99,6 +99,7 @@ const sentiments = ['Risk On', 'Risk Off', 'Mixed'];
 const analysisList = [];
 
 const showField = computed(() => {
+    console.log('show field', form.id);
     return form.id;
 });
 
@@ -111,8 +112,8 @@ const editEntry = (value) => {
     let targets = JSON.parse(value.targets);
 
     let concatEntryDate = `${value.entry_date} ${value.entry_time}`;
-    let concatActualExitDate = `${value.actual_exit_date} ${value.entry_time}`;
-    let concatSystemExitDate = `${value.system_exit_date} ${value.entry_time}`;
+    let concatActualExitDate = value.actual_exit_date ? new Date(`${value.actual_exit_date} ${value.entry_time}`) : new Date();
+    let concatSystemExitDate = value.system_exit_date ? new Date(`${value.system_exit_date} ${value.entry_time}`) : new Date();
 
     let newform = useForm({
             ...value,
@@ -121,8 +122,8 @@ const editEntry = (value) => {
             analysis: value.trading_strategy_id,
             title: 'Update Entry',
             entry_time: lightFormat(new Date(concatEntryDate), 'HH:mm'),
-            actual_exit_time: lightFormat(new Date(concatActualExitDate), 'HH:mm'),
-            system_exit_time: lightFormat(new Date(concatSystemExitDate), 'HH:mm'),
+            actual_exit_time: lightFormat(concatActualExitDate, 'HH:mm'),
+            system_exit_time: lightFormat(concatSystemExitDate, 'HH:mm'),
             actual_exit_price: 0.8946
         });
     Object.assign(
@@ -469,15 +470,15 @@ watch(
                     computeSentiment(form.position)   
                 }
                 
-                // if(form.actual_exit_price)
-                // {
-                //     computeActualProfitOrLoss(activeTicker.value);
-                // }
+                if(form.actual_exit_price)
+                {
+                    computeActualProfitOrLoss(activeTicker.value);
+                }
 
-                // if(form.system_exit_price)
-                // {
-                //     computeSystemProfitOrLoss(activeTicker.value);
-                // }
+                if(form.system_exit_price)
+                {
+                    computeSystemProfitOrLoss(activeTicker.value);
+                }
             }   
         }
         
@@ -502,8 +503,6 @@ watch(
 <template>
     <div class="mb-4 flex justify-end">
         <SecondaryButton
-            :class="{ 'opacity-25': form.processing }"
-            :disabled="form.processing"
             @click="() => AddEntry()"
         >
             Add Entry
@@ -517,7 +516,7 @@ watch(
                     <!-- Modal header -->
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            {{ form.title }}
+                            <!-- {{ form.title }} -->
                         </h3>
                         <button @click="closeModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -833,7 +832,7 @@ watch(
         <!-- *************** -->
 
         
-                            <!-- <div v-show="showField" class="flex my-4 justify-start items-center gap-4 col-span-5 ">
+                            <div v-show="showField" class="flex my-4 justify-start items-center gap-4 col-span-5 ">
                                 <h2><strong>Exit Data (Actual)</strong></h2>
                             </div>
 
@@ -979,7 +978,7 @@ watch(
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.actual_remarks" />
-                            </div> -->
+                            </div>
 
 
         <!-- *************** -->
@@ -987,7 +986,7 @@ watch(
         <!-- *************** -->
 
         
-                            <!-- <div v-show="showField"  class="flex my-4 justify-start items-center gap-4 col-span-5 ">
+                            <div v-show="showField"  class="flex my-4 justify-start items-center gap-4 col-span-5 ">
                                 <h2><strong>Exit Data (System)</strong></h2>
                             </div>
 
@@ -1120,7 +1119,7 @@ watch(
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.system_reward_ratio" />
-                            </div> -->
+                            </div>
 
                             <div v-show="showField" >
                                 <div>
@@ -1134,7 +1133,7 @@ watch(
         <!-- *************** -->
 
         
-                            <!-- <div class="flex my-2 justify-start items-center gap-4 col-span-5 ">
+                            <div class="flex my-2 justify-start items-center gap-4 col-span-5 ">
                                 <h2><strong>Charting and Execution</strong></h2>
                             </div>
 
@@ -1189,7 +1188,7 @@ watch(
 
                                 <InputError class="mt-2" :message="form.errors.session" />
                             </div>
-                             -->
+                            
 
                             <!-- <div>
                                 <InputLabel for="first_name" value="Firstname" />
@@ -1231,7 +1230,7 @@ watch(
                                     Save
                                 </PrimaryButton>
 
-                                <Transition
+                                <!-- <Transition
                                     enter-active-class="transition ease-in-out"
                                     enter-from-class="opacity-0"
                                     leave-active-class="transition ease-in-out"
@@ -1243,7 +1242,7 @@ watch(
                                     >
                                         Saved.
                                     </p>
-                                </Transition>
+                                </Transition> -->
                             </div>
                         </div>
                     </form>

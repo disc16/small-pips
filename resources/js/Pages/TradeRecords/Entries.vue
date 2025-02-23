@@ -37,6 +37,10 @@ const editItem = (data) => {
     console.log('woo', activeItem.value);
 }
 
+const onRowClick = () => {
+    console.log('aaahhh');
+}
+
 const clearActiveItem = () => {
     activeItem.value = null;
 }
@@ -45,12 +49,12 @@ onMounted(() => {
     console.log('Entries Mounted', props);
 
     // if (document.getElementById("default-table") && typeof simpleDatatables.DataTable !== 'undefined') {
-        const dataTable = new DataTable("#default-table", {
-            searchable: false,
-            searchQuerySeparator: " ",
-            perPageSelect: false
-            // perPageSelect: [5, 10, 20, 50]
-        });
+        // const dataTable = new DataTable("#default-table", {
+        //     searchable: false,
+        //     // searchQuerySeparator: " ",
+        //     perPageSelect: false,
+        //     // perPageSelect: [5, 10, 20, 50],
+        // });
     // }
 
 })
@@ -109,12 +113,12 @@ onMounted(() => {
                                                 Ticker Pair
                                             </span>
                                         </th>
-                                        <th scope="col" class="px-6 py-3">
+                                        <!-- <th scope="col" class="px-6 py-3">
                                             Position
                                         </th>
                                         <th scope="col" class="px-6 py-3">
                                             Stock Sentiment
-                                        </th>
+                                        </th> -->
                                         <th scope="col" class="px-6 py-3">
                                             Entry Price
                                         </th>
@@ -151,12 +155,12 @@ onMounted(() => {
                                         <td class="px-6 py-4">
                                             {{ item.ticker_pair.ticker }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <!-- <td class="px-6 py-4">
                                             {{ item.position }}
                                         </td>
                                         <td class="px-6 py-4">
                                             {{ item.stock_sentiment }}
-                                        </td>
+                                        </td> -->
                                         <td class="px-6 py-4">
                                             {{ item.entry_price }}
                                         </td>
@@ -172,11 +176,13 @@ onMounted(() => {
                                         <td class="px-6 py-4">
                                             {{ item.actual_percent_profit_loss }}
                                         </td>
-                                        <td class="px-6 py-4 text-right">
+                                        <td  class="px-6 py-4 text-right">
                                             <p
                                                 @click="() => editItem(item)"
                                                 href="#" 
-                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer">Edit</p>
+                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer">
+                                                Edits
+                                            </p>
                                         </td>
                                     </tr>
                                 </tbody>
