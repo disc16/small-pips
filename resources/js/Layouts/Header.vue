@@ -38,6 +38,10 @@ const tradeRecordsMenu = [
     { name: 'Entries', description: '', href: route('trade-records.show'), icon: ChartPieIcon },
 ];
 
+const analysisMenu = [
+
+];
+
 const userMenu = [
     { name: 'User List', description: '', href: route('users.show'), icon: ChartPieIcon },
 ];
@@ -49,7 +53,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-full px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 justify-between">
             <div class="flex">
                 <!-- Logo -->
@@ -61,114 +65,141 @@ onMounted(() => {
                     </Link>
                 </div>
 
-                <!-- Navigation Links -->
-                <div
-                    class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex"
+                
+            </div>
+
+            <!-- Navigation Links -->
+            <div
+                class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex"
+            >
+                <PopoverGroup class="hidden lg:flex lg:gap-x-8">
+                    <Popover class="relative inline-flex items-center">
+                        <PopoverButton class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
+                            Dashboard
+                            <ChevronDownIcon class="size-5 flex-none text-gray-400" aria-hidden="true" />
+                        </PopoverButton>
+
+                        <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
+                            <PopoverPanel class="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5">
+                            <div class="p-4">
+                                <div v-for="item in dashboardMenu" :key="item.name" class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
+                                <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                    <component :is="item.icon" class="size-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                                </div>
+                                <div class="flex-auto">
+                                    <Link :href="item.href" class="block font-semibold text-gray-900">
+                                    {{ item.name }}
+                                    <span class="absolute inset-0" />
+                                    </Link>
+                                    <p class="mt-1 text-gray-600">{{ item.description }}</p>
+                                </div>
+                                </div>
+                            </div>
+                            </PopoverPanel>
+                        </transition>
+                    </Popover>
+
+                    <Popover v-if="$page.props.auth.user.roles.some(e => e.name == 'User')" class="relative inline-flex items-center">
+                        <PopoverButton class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
+                            Trade Records
+                            <ChevronDownIcon class="size-5 flex-none text-gray-400" aria-hidden="true" />
+                        </PopoverButton>
+
+                        <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
+                            <PopoverPanel class="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5">
+                            <div class="p-4">
+                                <div v-for="item in tradeRecordsMenu" :key="item.name" class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
+                                <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                    <component :is="item.icon" class="size-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                                </div>
+                                <div class="flex-auto">
+                                    <Link :href="item.href" class="block font-semibold text-gray-900">
+                                    {{ item.name }}
+                                    <span class="absolute inset-0" />
+                                    </Link>
+                                    <p class="mt-1 text-gray-600">{{ item.description }}</p>
+                                </div>
+                                </div>
+                            </div>
+                            </PopoverPanel>
+                        </transition>
+                    </Popover>
+                    <Popover v-if="$page.props.auth.user.roles.some(e => e.name == 'User')" class="relative inline-flex items-center">
+                        <PopoverButton class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
+                            Analysis
+                            <ChevronDownIcon class="size-5 flex-none text-gray-400" aria-hidden="true" />
+                        </PopoverButton>
+
+                        <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
+                            <PopoverPanel class="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5">
+                            <div class="p-4">
+                                <div v-for="item in analysisMenu" :key="item.name" class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
+                                <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                    <component :is="item.icon" class="size-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                                </div>
+                                <div class="flex-auto">
+                                    <Link :href="item.href" class="block font-semibold text-gray-900">
+                                    {{ item.name }}
+                                    <span class="absolute inset-0" />
+                                    </Link>
+                                    <p class="mt-1 text-gray-600">{{ item.description }}</p>
+                                </div>
+                                </div>
+                            </div>
+                            </PopoverPanel>
+                        </transition>
+                    </Popover>
+                    <Popover v-if="$page.props.auth.user.roles.some(e => e.name == 'Admin')" class="relative inline-flex items-center">
+                        <PopoverButton class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
+                            Users
+                            <ChevronDownIcon class="size-5 flex-none text-gray-400" aria-hidden="true" />
+                        </PopoverButton>
+
+                        <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
+                            <PopoverPanel class="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5">
+                            <div class="p-4">
+                                <div v-for="item in userMenu" :key="item.name" class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
+                                <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                    <component :is="item.icon" class="size-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
+                                </div>
+                                <div class="flex-auto">
+                                    <Link :href="item.href" class="block font-semibold text-gray-900">
+                                    {{ item.name }}
+                                    <span class="absolute inset-0" />
+                                    </Link>
+                                    <p class="mt-1 text-gray-600">{{ item.description }}</p>
+                                </div>
+                                </div>
+                            </div>
+                            </PopoverPanel>
+                        </transition>
+                    </Popover>
+
+                </PopoverGroup>
+                
+
+                <!-- <NavLink
+                    :href="route('dashboard')"
+                    :active="route().current('dashboard')"
                 >
-                    <PopoverGroup class="hidden lg:flex lg:gap-x-8">
-                        <Popover class="relative inline-flex items-center">
-                            <PopoverButton class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-                                Dashboard
-                                <ChevronDownIcon class="size-5 flex-none text-gray-400" aria-hidden="true" />
-                            </PopoverButton>
+                    Dashboard
+                </NavLink>
+                
+                <NavLink
+                    v-if="$page.props.auth.user.roles.some(e => e.name == 'User')"
+                    :href="route('trade-records.show')"
+                    :active="route().current('trade-records.show')"
+                >
+                    Trade Records
+                </NavLink>
 
-                            <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
-                                <PopoverPanel class="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5">
-                                <div class="p-4">
-                                    <div v-for="item in dashboardMenu" :key="item.name" class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
-                                    <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                        <component :is="item.icon" class="size-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
-                                    </div>
-                                    <div class="flex-auto">
-                                        <Link :href="item.href" class="block font-semibold text-gray-900">
-                                        {{ item.name }}
-                                        <span class="absolute inset-0" />
-                                        </Link>
-                                        <p class="mt-1 text-gray-600">{{ item.description }}</p>
-                                    </div>
-                                    </div>
-                                </div>
-                                </PopoverPanel>
-                            </transition>
-                        </Popover>
-
-                        <Popover v-if="$page.props.auth.user.roles.some(e => e.name == 'User')" class="relative inline-flex items-center">
-                            <PopoverButton class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-                                Trade Records
-                                <ChevronDownIcon class="size-5 flex-none text-gray-400" aria-hidden="true" />
-                            </PopoverButton>
-
-                            <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
-                                <PopoverPanel class="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5">
-                                <div class="p-4">
-                                    <div v-for="item in tradeRecordsMenu" :key="item.name" class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
-                                    <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                        <component :is="item.icon" class="size-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
-                                    </div>
-                                    <div class="flex-auto">
-                                        <Link :href="item.href" class="block font-semibold text-gray-900">
-                                        {{ item.name }}
-                                        <span class="absolute inset-0" />
-                                        </Link>
-                                        <p class="mt-1 text-gray-600">{{ item.description }}</p>
-                                    </div>
-                                    </div>
-                                </div>
-                                </PopoverPanel>
-                            </transition>
-                        </Popover>
-                        <Popover v-if="$page.props.auth.user.roles.some(e => e.name == 'Admin')" class="relative inline-flex items-center">
-                            <PopoverButton class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-                                Users
-                                <ChevronDownIcon class="size-5 flex-none text-gray-400" aria-hidden="true" />
-                            </PopoverButton>
-
-                            <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
-                                <PopoverPanel class="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5">
-                                <div class="p-4">
-                                    <div v-for="item in userMenu" :key="item.name" class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
-                                    <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                        <component :is="item.icon" class="size-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
-                                    </div>
-                                    <div class="flex-auto">
-                                        <Link :href="item.href" class="block font-semibold text-gray-900">
-                                        {{ item.name }}
-                                        <span class="absolute inset-0" />
-                                        </Link>
-                                        <p class="mt-1 text-gray-600">{{ item.description }}</p>
-                                    </div>
-                                    </div>
-                                </div>
-                                </PopoverPanel>
-                            </transition>
-                        </Popover>
-
-                    </PopoverGroup>
-                    
-
-                    <!-- <NavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
-                    >
-                        Dashboard
-                    </NavLink>
-                    
-                    <NavLink
-                        v-if="$page.props.auth.user.roles.some(e => e.name == 'User')"
-                        :href="route('trade-records.show')"
-                        :active="route().current('trade-records.show')"
-                    >
-                        Trade Records
-                    </NavLink>
-
-                    <NavLink
-                        v-if="$page.props.auth.user.roles.some(e => e.name == 'Admin')"
-                        :href="route('users.show')"
-                        :active="route().current('users.show')"
-                    >
-                        Users
-                    </NavLink> -->
-                </div>
+                <NavLink
+                    v-if="$page.props.auth.user.roles.some(e => e.name == 'Admin')"
+                    :href="route('users.show')"
+                    :active="route().current('users.show')"
+                >
+                    Users
+                </NavLink> -->
             </div>
 
             <div class="hidden sm:ms-6 sm:flex sm:items-center">

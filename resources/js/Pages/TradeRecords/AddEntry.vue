@@ -9,7 +9,7 @@ import { Head, useForm } from '@inertiajs/vue3';
 import Modal from '@/Components/molecule/Modal.vue';
 import { nextTick, ref, onMounted, watch, onUpdated, computed, onBeforeMount } from 'vue';
 
-import { lightFormat, differenceInDays } from "date-fns";
+import { lightFormat, differenceInDays, differenceInHours, differenceInMinutes } from "date-fns";
 import { initFlowbite } from 'flowbite'
 
 const emit = defineEmits(['clearForm'])
@@ -29,19 +29,25 @@ const props = defineProps({
     },
     record: {
         type: Object
+    },
+    action: {
+        type: String
+    },
+    tradingTime: {
+        type: Array
     }
 });
 
 const showFormModal = ref(false);
 const activeTicker = ref(null);
 const pipValue = ref(0);
+const formAction = ref(props.action)
 
-
-let form = useForm({
+const formData = {
         id: null,
         user_id: props.user.id,
         processing: false,
-        title: 'Add Entry',
+        title: 'New Trade',
         entry_date: lightFormat(new Date(), 'yyyy-MM-dd'),
         entry_time: lightFormat(new Date(), 'HH:mm'),
         ticker: null,
@@ -53,11 +59,11 @@ let form = useForm({
         stock_sentiment: '', // default ''
         position: 'Long',
         trade_sentiment: '',
-        acct_curr_pair_price: '0.6198', // default 0
-        entry_price: '0.8916', // default 0
-        stop_price: '0.8896', // default 0
+        acct_curr_pair_price: '0', // default 0.6198
+        entry_price: '0', // default 0.8916
+        stop_price: '0', // default 0.8896
         // manual_risk_value: props.capital.risk_amount,
-        manual_risk_value: 9.73,
+        manual_risk_value: 0, // 9.73
         lots: '',
         risk_value: props.capital.risk_amount,
         risk_pips: 0,
@@ -71,7 +77,7 @@ let form = useForm({
         actual_exit_price: 0.8946,
         actual_profit_loss: 0,
         actual_actual_profit_loss: 0,
-        actual_status: '',
+        actual_status: 'OPEN',
         actual_holding_period: 0,
         actual_percent_profit_loss: 0,
         actual_reward_ratio: 0,
@@ -81,7 +87,7 @@ let form = useForm({
         system_exit_price: 0,
         system_profit_loss: 0,
         system_actual_profit_loss: 0,
-        system_status: '',
+        system_status: 'OPEN',
         system_holding_period: 0,
         system_percent_profit_loss: 0,
         system_reward_ratio: 0,
@@ -90,7 +96,9 @@ let form = useForm({
         exit_chart: '',
         note: '',
         session: ''
-    });
+    };
+
+let form = useForm(formData);
 
 
 const orderTypes = ['Setup', 'Market', 'Impulse'];
@@ -103,8 +111,24 @@ const showField = computed(() => {
     return form.id;
 });
 
+const enableField = computed(() => {
+    console.log('enable field', formAction.value);
+
+    if(formAction.value == 'edit' || formAction.value == 'new')
+    {
+        return true;   
+    }
+
+    return false;
+});
+
 const AddEntry = () => {
     openFormModal();
+
+    let newform = useForm(formData);
+
+    Object.assign(form, newform)
+    formAction.value = 'new';
 }
 
 const editEntry = (value) => {
@@ -120,11 +144,38 @@ const editEntry = (value) => {
             ...targets,
             ticker: value.ticker_id,
             analysis: value.trading_strategy_id,
-            title: 'Update Entry',
+            title: 'Update Trade',
             entry_time: lightFormat(new Date(concatEntryDate), 'HH:mm'),
             actual_exit_time: lightFormat(concatActualExitDate, 'HH:mm'),
             system_exit_time: lightFormat(concatSystemExitDate, 'HH:mm'),
             actual_exit_price: 0.8946
+        });
+    Object.assign(
+        form,
+        newform
+    )
+
+
+    openFormModal();
+}
+
+const viewEntry = (value) => {
+    console.log('view entry', enableField);
+    let targets = JSON.parse(value.targets);
+
+    let concatEntryDate = `${value.entry_date} ${value.entry_time}`;
+    let concatActualExitDate = value.actual_exit_date ? new Date(`${value.actual_exit_date} ${value.entry_time}`) : new Date();
+    let concatSystemExitDate = value.system_exit_date ? new Date(`${value.system_exit_date} ${value.entry_time}`) : new Date();
+
+    let newform = useForm({
+            ...value,
+            ...targets,
+            ticker: value.ticker_id,
+            analysis: value.trading_strategy_id,
+            title: 'View Trade',
+            entry_time: lightFormat(new Date(concatEntryDate), 'HH:mm'),
+            actual_exit_time: lightFormat(concatActualExitDate, 'HH:mm'),
+            system_exit_time: lightFormat(concatSystemExitDate, 'HH:mm'),
         });
     Object.assign(
         form,
@@ -190,7 +241,7 @@ const getRiskPips = (ticker) => {
 }
 
 const computeShareLots = (ticker) => {
-    const { board_lot, pip_multiplier, standard_lot, micro_lot, mini_lot, account_base_currency } = ticker;
+    const { account_currency_pair, pip_multiplier, account_base_currency } = ticker;
     const { account_type } = props.user.market_information;
 
     let units = account_type == 'Standard' ? ticker.standard_lot : account_type == 'Mini'
@@ -204,7 +255,16 @@ const computeShareLots = (ticker) => {
     }
     else
     {
-        pip_value = (((pip_multiplier * units) / form.entry_price) * form.acct_curr_pair_price).toFixed(4);
+        // pip_value = (((pip_multiplier * units) / form.entry_price) * form.acct_curr_pair_price).toFixed(4);
+        pip_value = (((pip_multiplier * units) / form.entry_price));
+        if(account_currency_pair == 'yes')
+        {
+            pip_value = (pip_value * form.acct_curr_pair_price).toFixed(4);
+        }
+        else
+        {
+            pip_value =  (pip_value * (1/form.acct_curr_pair_price)).toFixed(4);
+        }
     }
 
     let risk_pips = getRiskPips(ticker);
@@ -219,6 +279,7 @@ const computeShareLots = (ticker) => {
     pipValue.value = pip_value;
     form.lots = volume_lot;
     form.risk_pips = risk_pips;
+    form.pip_value = pipValue;
 }
 
 const computeRiskValue = (risk_pips, volume_lot, pip_value) => {
@@ -346,6 +407,8 @@ const computeActualProfitOrLoss = (ticker) => {
     form.actual_holding_period = days;
     form.actual_percent_profit_loss = percentLoss.toFixed(2);
     form.actual_reward_ratio = rrr.toFixed(2);
+
+    console.log('yawaaaa lang', status);
     form.actual_status = status;
 
 }
@@ -410,6 +473,22 @@ const computeSystemProfitOrLoss = (ticker) => {
 
 }
 
+const getSession = (value) => {
+    let current = new Date(`2000-01-01 ${value}`);
+
+    props.tradingTime.map(e => {
+        let time = new Date(`2000-01-01 ${e.ph_time}`);
+        let diff = differenceInMinutes(current, time);
+
+
+        if(diff >= 0 && diff <= 30)
+        {
+            form.session = e.session
+        }
+    })
+
+}
+
 // onBeforeMount(() => {
 //     console.log('onBeforeMount');
 //     if(!props.isNew)
@@ -419,7 +498,7 @@ const computeSystemProfitOrLoss = (ticker) => {
 // })
 
 onMounted(() => {
-
+    console.log('add entry props', props);
     initFlowbite();
 })
 
@@ -440,6 +519,16 @@ watch(
 )
 
 watch(
+    () => form.entry_time,
+    (value) => {
+
+        console.log('watch entry time', value);
+        getSession(value);
+    },
+    { deep: true }
+)
+
+watch(
     () => form.ticker,
     (value) => {
 
@@ -455,7 +544,12 @@ watch(
 watch(
     () => form,
     (value) => {
-        console.log('watch form', value, value.processing, value.isDirty);
+        console.log('watch form', props, value, value.processing, value.isDirty);
+
+        if(value.entry_time)
+        {
+            getSession(value.entry_time);
+        }
 
         if(!value.processing && value.isDirty)
         {
@@ -480,7 +574,11 @@ watch(
                     computeSystemProfitOrLoss(activeTicker.value);
                 }
             }   
+
+            
         }
+
+        
         
     },
     { deep: true }
@@ -492,11 +590,30 @@ watch(
 
         if(value)
         {
-            editEntry(value);   
+            if(props.action == 'edit')
+            {
+                editEntry(value);   
+            }
+            else {
+                viewEntry(value);
+            }
         }
     },
     { deep: true }
 )
+
+// watch(
+//     () => props.action,
+//     (value) => {
+
+//         if(value == 'edit' || value == 'new')
+//         {
+//             formAction.value =    
+//         }
+               
+//     },
+//     { deep: true }
+// )
 
 </script>
 
@@ -505,7 +622,7 @@ watch(
         <SecondaryButton
             @click="() => AddEntry()"
         >
-            Add Entry
+            New Trade
         </SecondaryButton>
 
         <!-- Modal toggle -->
@@ -516,7 +633,7 @@ watch(
                     <!-- Modal header -->
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            <!-- {{ form.title }} -->
+                            {{ form.title }}
                         </h3>
                         <button @click="closeModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -539,8 +656,20 @@ watch(
                                 <InputLabel for="entry_date" value="Entry Date + Time" />
 
                                 <div class="relative max-w-sm">
-                                    <input type="date" id="entry_date" v-model="form.entry_date" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2" />
-                                    <input type="time" id="entry_date" v-model="form.entry_time" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full" />
+                                    <input 
+                                        type="date" 
+                                        id="entry_date" 
+                                        v-model="form.entry_date" 
+                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2 ${!enableField ? 'bg-gray-200' : ''}`"
+                                        :disabled="!enableField" 
+                                    />
+                                    <input 
+                                        type="time" 
+                                        id="entry_date" 
+                                        v-model="form.entry_time" 
+                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
+                                        :disabled="!enableField" 
+                                    />
                                 </div>
 
                                 <InputError class="mt-2" :message="form.errors.first_name" />
@@ -553,7 +682,7 @@ watch(
                                     <option v-for="(ticker, index) in tickers" :key="index" :value="ticker.id" >{{ ticker.ticker }}</option>
                                 </select> -->
 
-                                <SelectInput id="tickers" v-model="form.ticker" required>
+                                <SelectInput id="tickers" v-model="form.ticker" required :disabled="!enableField" :class="` ${!enableField ? 'bg-gray-200' : ''}`" >
                                     <!-- <option disabled value="" selected>Please select Ticker</option> -->
                                     <option v-for="(ticker, index) in tickers" :key="index" :value="ticker.id" >{{ ticker.ticker }}</option>
                                 </SelectInput>
@@ -564,7 +693,7 @@ watch(
                             <div>
                                 <InputLabel for="orderType" value="Order Type" />
 
-                                <SelectInput id="orderType" v-model="form.order_type" required>
+                                <SelectInput id="orderType" v-model="form.order_type" required :disabled="!enableField" >
                                     <!-- <option disabled value="" selected>Please select Ticker</option> -->
                                     <option v-for="(type, index) in orderTypes" :key="index"  >{{ type }}</option>
                                 </SelectInput>
@@ -575,7 +704,7 @@ watch(
                             <div>
                                 <InputLabel for="positon" value="Position" />
 
-                                <SelectInput id="position" v-model="form.position" required>
+                                <SelectInput id="position" v-model="form.position" required :disabled="!enableField" >
                                     <!-- <option disabled value="" selected>Please select Ticker</option> -->
                                     <option v-for="(position, index) in positions" :key="index" >{{ position }}</option>
                                 </SelectInput>
@@ -586,7 +715,7 @@ watch(
                             <div>
                                 <InputLabel for="stockSentiment" value="Stock Market Sentiment" />
 
-                                <SelectInput id="stockSentiment" v-model="form.stock_sentiment" required>
+                                <SelectInput id="stockSentiment" v-model="form.stock_sentiment" required :disabled="!enableField" >
                                     <!-- <option disabled value="" selected>Please select Ticker</option> -->
                                     <option v-for="(sentiment, index) in sentiments" :key="index"  >{{ sentiment }}</option>
                                 </SelectInput>
@@ -606,6 +735,7 @@ watch(
                                     required
                                     autofocus
                                     autocomplete="purrchasePrice"
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.acct_curr_pair_price" />
@@ -614,7 +744,7 @@ watch(
                             <div>
                                 <InputLabel for="analysis" value="Analysis/Setup" />
 
-                                <SelectInput id="analysis" v-model="form.analysis">
+                                <SelectInput id="analysis" v-model="form.analysis" :disabled="!enableField" >
                                     <!-- <option disabled value="" selected>Please select Ticker</option> -->
                                     <option v-for="(strat, index) in strategies" :key="index" :value="strat.id"  >{{ strat.strategy }}</option>
                                 </SelectInput>
@@ -686,6 +816,7 @@ watch(
                                     required
                                     autofocus
                                     autocomplete="purrchasePrice"
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.entry_price" />
@@ -703,6 +834,7 @@ watch(
                                     required
                                     autofocus
                                     autocomplete="purrchasePrice"
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.stop_price" />
@@ -721,6 +853,7 @@ watch(
                                     required
                                     autofocus
                                     autocomplete="purrchasePrice"
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.manual_risk_value" />
@@ -858,6 +991,7 @@ watch(
                                     required
                                     autofocus
                                     autocomplete="purrchasePrice"
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.actual_exit_price" />
@@ -889,6 +1023,7 @@ watch(
                                     class="mt-1 block w-full"
                                     v-model="form.actual_actual_profit_loss"
                                     required
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.actual_actual_profit_loss" />
@@ -975,6 +1110,7 @@ watch(
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.actual_remarks"
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.actual_remarks" />
@@ -994,7 +1130,7 @@ watch(
                                 <InputLabel for="system_exit_date" value="Exit Date" />
 
                                 <div class="relative max-w-sm">
-                                    <input type="date" id="system_exit_date" v-model="form.system_exit_date" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2" />
+                                    <input type="date" id="system_exit_date" v-model="form.system_exit_date" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2" :disabled="!enableField" />
                                 </div>
 
                                 <InputError class="mt-2" :message="form.errors.acutla_exit_date" />
@@ -1012,6 +1148,7 @@ watch(
                                     required
                                     autofocus
                                     autocomplete="purrchasePrice"
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.system_exit_price" />
@@ -1033,7 +1170,7 @@ watch(
                                 <InputError class="mt-2" :message="form.errors.system_profit_loss" />
                             </div>
 
-                            <div v-show="showField" >
+                            <!-- <div v-show="showField" >
                                 <InputLabel for="systemActualProfitLoss" value="Actual Profit/Loss Amount" />
 
                                 <TextInput
@@ -1046,7 +1183,7 @@ watch(
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.system_actual_profit_loss" />
-                            </div>
+                            </div> -->
 
                             <div v-show="showField" >
                                 <InputLabel for="system_status" value="Status" />
@@ -1064,10 +1201,16 @@ watch(
                             </div>
 
                             <div v-show="showField" >
+                                <div>
+                                    <!-- Leave empty -->
+                                </div>
+                            </div>
+
+                            <div v-show="showField" >
                                 <InputLabel for="system_exit_time" value="Exit Time" />
 
                                 <div class="relative max-w-sm">
-                                    <input type="time" id="system_exit_time" v-model="form.system_exit_time" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full" />
+                                    <input type="time" id="system_exit_time" v-model="form.system_exit_time" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full" :disabled="!enableField" />
                                 </div>
 
                                 <InputError class="mt-2" :message="form.errors.system_exit_time" />
@@ -1127,6 +1270,8 @@ watch(
                                 </div>
                             </div>
 
+                            
+
 
         <!-- *************** -->
         <!-- Charting and Execution -->
@@ -1141,11 +1286,15 @@ watch(
                                 <InputLabel for="openChart" value="Plan/Open Chart Link" />
 
                                 <TextInput
+                                    v-if="enableField"
                                     id="openChart"
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.open_chart"
                                 />
+                                <div v-else  class="max-w-full overflow-hidden text-blue-600">
+                                    <a :href="form.open_chart" target="_blank">{{ form.open_chart }}</a>
+                                </div>
 
                                 <InputError class="mt-2" :message="form.errors.open_chart" />
                             </div>
@@ -1154,11 +1303,15 @@ watch(
                                 <InputLabel for="exitChart" value="Exit Chart Link" />
 
                                 <TextInput
+                                    v-if="enableField"
                                     id="exitChart"
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.exit_chart"
                                 />
+                                <div v-else class="max-w-full overflow-hidden text-blue-600">
+                                    <a :href="form.exit_chart" target="_blank" class="break-all">{{ form.exit_chart }}</a>
+                                </div>
 
                                 <InputError class="mt-2" :message="form.errors.exit_chart" />
                             </div>

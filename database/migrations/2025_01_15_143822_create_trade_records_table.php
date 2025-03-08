@@ -62,6 +62,8 @@ return new class extends Migration
             $table->foreignId('currency_price_id')->index()->nullable();
             $table->timestamps();
         });
+
+        \DB::statement('ALTER TABLE table_name AUTO_INCREMENT = 10000;');
     }
 
     /**

@@ -244,13 +244,15 @@ class TradeRecordsController extends Controller
         $tickers = TickerPair::all();
         $strategies = TradingStrategy::where('user_id', auth()->user()->id)->get();
         $capital = CapitalAndRiskMgmt::where('user_id', auth()->user()->id)->first();
+        $tradingTime = TradingTime::get();
 
         return [
             'user' => auth()->user()->load(['marketInformation', 'tradingStrategies', 'capitalAndRiskMgmt']),
             'entries' => $entries,
             'tickers' => $tickers,
             'capital' => $capital,
-            'strategies' => $strategies
+            'strategies' => $strategies,
+            'tradingTime' => $tradingTime
         ];
      }
 }
