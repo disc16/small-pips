@@ -63,7 +63,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        \DB::statement('ALTER TABLE table_name AUTO_INCREMENT = 10000;');
     }
 
     /**
