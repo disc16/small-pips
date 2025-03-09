@@ -2,7 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TradeRecordsHeader from './TradeRecordsHeader.vue';
 import NavLink from '@/Components/atom/NavLink.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, Link } from '@inertiajs/vue3';
 import Modal from '@/Components/molecule/Modal.vue';
 import AddEntry from './AddEntry.vue';
 import { onMounted, ref } from 'vue';
@@ -107,6 +107,11 @@ const rowColor = (item) => {
 
 }
 
+const gotoPage = (key) => {
+    console.log('go to page', key);
+    this.$inertia.post(`/trade-records/entries?page=${key}`);
+}
+
 onMounted(() => {
     console.log('Entries Mounted', props);
 
@@ -164,7 +169,7 @@ onMounted(() => {
 
 
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                            <table id="default-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
                                         <th scope="col" class="px-6 py-3">
@@ -236,7 +241,7 @@ onMounted(() => {
                                 </thead>
                                 <tbody>
                                     <tr 
-                                        v-for="(item, index) in entries"
+                                        v-for="(item, index) in entries.data"
                                         :class="`bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${rowColor(item)}`"
                                         :key="index"
                                     >
@@ -312,6 +317,44 @@ onMounted(() => {
                                     </tr>
                                 </tbody>
                             </table>
+                            <div class="relative h-16">
+                                <nav 
+                                    class="fixed flex items-center flex-column flex-wrap md:flex-row justify-between p-4"
+                                    style="width: calc(100% - 112px)"
+                                    aria-label="Table navigation"
+                                >
+                                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">Showing <span class="font-semibold text-gray-900 dark:text-white">{{entries.from}}-{{entries.to}}</span> of <span class="font-semibold text-gray-900 dark:text-white">{{entries.total}}</span></span>
+                                    <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                                        <li>
+                                            <a :href="`${entries.prev_page_url}`" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+                                        </li>
+
+                                        <li v-for="key in (entries.total / entries.per_page)">
+                                            <p
+                                                class="cursor-pointer flex items-center justify-center px-3 h-8 leading-tight dark:hover:bg-gray-700 dark:hover:text-white"
+                                                :class="{'text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700': key == entries.current_page, 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700': key != entries.current_page}"
+                                            >
+                                                <!-- {{ key }} -->
+                                                <Link :href="`/trade-records/entries?page=${key}`" method="post" >{{ key }}</Link>
+                                            </p>
+                                        </li>
+
+                                        <li>
+                                            <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" aria-current="page" class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
+                                        </li>
+                                        <li>
+                                            <a :href="`${entries.next_page_url}`" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>

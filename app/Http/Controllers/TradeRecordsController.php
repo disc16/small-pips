@@ -240,7 +240,7 @@ class TradeRecordsController extends Controller
 
      public function getRecordsOverview() {
         $user = auth()->user();
-        $entries = TradeRecords::with('tickerPair', 'currencyPrice')->where('user_id', auth()->user()->id)->get()->reverse()->values();
+        $entries = TradeRecords::with('tickerPair', 'currencyPrice')->where('user_id', auth()->user()->id)->latest()->paginate(2);
         $tickers = TickerPair::all();
         $strategies = TradingStrategy::where('user_id', auth()->user()->id)->get();
         $capital = CapitalAndRiskMgmt::where('user_id', auth()->user()->id)->first();
