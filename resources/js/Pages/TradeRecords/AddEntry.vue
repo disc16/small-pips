@@ -107,12 +107,10 @@ const sentiments = ['Risk On', 'Risk Off', 'Mixed'];
 const analysisList = [];
 
 const showField = computed(() => {
-    console.log('show field', form.id);
     return form.id;
 });
 
 const enableField = computed(() => {
-    console.log('enable field', formAction.value);
 
     if(formAction.value == 'edit' || formAction.value == 'new')
     {
@@ -132,7 +130,6 @@ const AddEntry = () => {
 }
 
 const editEntry = (value) => {
-    console.log('edit entry');
     let targets = JSON.parse(value.targets);
 
     let concatEntryDate = `${value.entry_date} ${value.entry_time}`;
@@ -160,7 +157,6 @@ const editEntry = (value) => {
 }
 
 const viewEntry = (value) => {
-    console.log('view entry', enableField);
     let targets = JSON.parse(value.targets);
 
     let concatEntryDate = `${value.entry_date} ${value.entry_time}`;
@@ -241,7 +237,7 @@ const getRiskPips = (ticker) => {
 }
 
 const computeShareLots = (ticker) => {
-    const { account_currency_pair, pip_multiplier, account_base_currency } = ticker;
+    const { account_currency_pair, pip_multiplier, account_base_currency, board_lot } = ticker;
     const { account_type } = props.user.market_information;
 
     let units = account_type == 'Standard' ? ticker.standard_lot : account_type == 'Mini'
@@ -271,6 +267,7 @@ const computeShareLots = (ticker) => {
 
 
     let volume_lot = form.manual_risk_value / (risk_pips * pip_value);
+    volume_lot = ceiling(volume_lot, board_lot);
     volume_lot = volume_lot.toFixed(2)
 
     // Call to compute Risk Value and Percent Control
@@ -281,6 +278,10 @@ const computeShareLots = (ticker) => {
     form.risk_pips = risk_pips;
     form.pip_value = pipValue;
 }
+
+const ceiling = (number, significance) => {
+      return Math.ceil(number / significance) * significance;
+    }
 
 const computeRiskValue = (risk_pips, volume_lot, pip_value) => {
     const { capital } = props.user.capital_and_risk_mgmt;
@@ -408,7 +409,6 @@ const computeActualProfitOrLoss = (ticker) => {
     form.actual_percent_profit_loss = percentLoss.toFixed(2);
     form.actual_reward_ratio = rrr.toFixed(2);
 
-    console.log('yawaaaa lang', status);
     form.actual_status = status;
 
 }
@@ -522,7 +522,6 @@ watch(
     () => form.entry_time,
     (value) => {
 
-        console.log('watch entry time', value);
         getSession(value);
     },
     { deep: true }
@@ -534,7 +533,6 @@ watch(
 
         let getTicker = props.tickers.filter(e => e.id == value);
         activeTicker.value = getTicker[0];
-        console.log('Watch ticker', getTicker);
 
                
     },
@@ -544,7 +542,6 @@ watch(
 watch(
     () => form,
     (value) => {
-        console.log('watch form', props, value, value.processing, value.isDirty);
 
         if(value.entry_time)
         {
@@ -553,7 +550,6 @@ watch(
 
         if(!value.processing && value.isDirty)
         {
-            console.log('proceed change');
             if(activeTicker.value)
             {
                 computeShareLots(activeTicker.value);
@@ -728,6 +724,7 @@ watch(
 
                                 <TextInput
                                     id="purrchasePrice"
+                                    name="purrchasePrice"
                                     type="number"
                                     step="any"
                                     class="mt-1 block w-full"
@@ -757,6 +754,7 @@ watch(
 
                                 <TextInput
                                     id="economicIndicator"
+                                    name="economicIndicator"
                                     type="text"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.economic_indicator"
@@ -771,6 +769,7 @@ watch(
 
                                 <TextInput
                                     id="ecResult"
+                                    name="ecResult"
                                     type="text"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.ec_result"
@@ -785,6 +784,7 @@ watch(
 
                                 <TextInput
                                     id="tradeSentiment"
+                                    name="tradeSentiment"
                                     type="text"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.trade_sentiment"
@@ -809,6 +809,7 @@ watch(
 
                                 <TextInput
                                     id="entryPrice"
+                                    name="entryPrice"
                                     type="number"
                                     step="any"
                                     class="mt-1 block w-full"
@@ -827,6 +828,7 @@ watch(
 
                                 <TextInput
                                     id="stopPrice"
+                                    name="stopPrice"
                                     type="number"
                                     step="any"
                                     class="mt-1 block w-full"
@@ -845,6 +847,7 @@ watch(
 
                                 <TextInput
                                     id="manualRiskValue"
+                                    name="manualRiskValue"
                                     type="number"
                                     :max="form.manual_risk_value"
                                     step="any"
@@ -864,6 +867,7 @@ watch(
 
                                 <TextInput
                                     id="lots"
+                                    name="lots"
                                     type="text"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.lots"
@@ -878,6 +882,7 @@ watch(
 
                                 <TextInput
                                     id="riskValue"
+                                    name="riskValue"
                                     type="number"
                                     :max="form.manual_risk_value"
                                     step="any"
@@ -894,6 +899,7 @@ watch(
 
                                 <TextInput
                                     id="targetRecommend"
+                                    name="targetRecommend"
                                     type="text"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.target_reco"
@@ -908,6 +914,7 @@ watch(
 
                                 <TextInput
                                     id="targetPrice1"
+                                    name="targetPrice1"
                                     type="text"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.target_price_1"
@@ -922,6 +929,7 @@ watch(
 
                                 <TextInput
                                     id="targetPrice2"
+                                    name="targetPrice2"
                                     type="text"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.target_price_2"
@@ -936,6 +944,7 @@ watch(
 
                                 <TextInput
                                     id="targetPrice3"
+                                    name="targetPrice3"
                                     type="text"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.target_price_3"
@@ -950,6 +959,7 @@ watch(
 
                                 <TextInput
                                     id="percentControl"
+                                    name="percentControl"
                                     type="text"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.percent_control"
