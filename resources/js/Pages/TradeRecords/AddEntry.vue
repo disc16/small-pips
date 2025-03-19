@@ -129,6 +129,14 @@ const AddEntry = () => {
     formAction.value = 'new';
 }
 
+const editForm = () => {
+    console.log('edit form');
+    emit('editViewedForm', props.record);
+    setTimeout(() => {
+        closeModal();
+    }, 200);
+}
+
 const editEntry = (value) => {
     let targets = JSON.parse(value.targets);
 
@@ -224,7 +232,7 @@ const updateForm = () => {
 }
 
 const computeSentiment = (value) => {
-    form.trade_sentiment = value == 'Short' ? activeTicker.value.sentiment_short : activeTicker.value.sentiment_long;
+    form.trade_sentiment = value == 'Short' ? activeTicker?.value?.sentiment_short : activeTicker?.value?.sentiment_long;
     // form.trade_sentiment = form.stock_sentiment;
 }
 
@@ -596,18 +604,18 @@ watch(
     { deep: true }
 )
 
-// watch(
-//     () => props.action,
-//     (value) => {
-
-//         if(value == 'edit' || value == 'new')
-//         {
-//             formAction.value =    
-//         }
+watch(
+    () => props.action,
+    (value) => {
+        console.log('watch action', value);
+        if(value == 'edit' || value == 'new')
+        {
+            formAction.value = value;
+        }
                
-//     },
-//     { deep: true }
-// )
+    },
+    { deep: true }
+)
 
 </script>
 
@@ -1383,11 +1391,20 @@ watch(
 
                             <div class="flex justify-end items-center gap-4 col-span-5 ">
                                 <PrimaryButton
+                                    v-show="props.action != 'view'"
                                     :class="{ 'opacity-25': form.processing }"
                                     :disabled="form.processing"
                                 >
                                     Save
                                 </PrimaryButton>
+
+                                <SecondaryButton
+                                    v-show="props.action == 'view'"
+                                    :class="{ 'opacity-25': form.processing }"
+                                    @click="editForm"
+                                >
+                                    Update
+                                </SecondaryButton>
 
                                 <!-- <Transition
                                     enter-active-class="transition ease-in-out"

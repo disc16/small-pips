@@ -34,6 +34,13 @@ const props = defineProps({
 const activeItem = ref(null);
 const modalAction = ref(null);
 
+const editViewedForm = (data) => {
+    console.log('editViewedForm');
+    setTimeout(() => {
+        editItem(data);
+    }, 500);
+}
+
 const editItem = (data) => {
     activeItem.value = data;
     modalAction.value = "edit"
@@ -154,6 +161,7 @@ onMounted(() => {
                                     Trade Entries
                                 </h2>
                             </div>
+                            {{ modalAction }}
                             <AddEntry 
                                 :record="activeItem" 
                                 :tickers="tickers" 
@@ -163,6 +171,7 @@ onMounted(() => {
                                 :action="modalAction"
                                 :tradingTime="tradingTime"
                                 @clearForm="clearActiveItem"
+                                @editViewedForm="editViewedForm"
                             />
                         </div>
                         
