@@ -74,7 +74,7 @@ const formData = {
         percent_control: '',
         actual_exit_date: lightFormat(new Date(), 'yyyy-MM-dd'),
         actual_exit_time: lightFormat(new Date(), 'HH:mm'),
-        actual_exit_price: 0.8946,
+        actual_exit_price: 0, //0.8946
         actual_profit_loss: 0,
         actual_actual_profit_loss: 0,
         actual_status: 'OPEN',
@@ -237,7 +237,7 @@ const getRiskPips = (ticker) => {
 }
 
 const computeShareLots = (ticker) => {
-    const { account_currency_pair, pip_multiplier, account_base_currency, board_lot } = ticker;
+    const { with_account_currency_pair, pip_multiplier, account_base_currency, board_lot } = ticker;
     const { account_type } = props.user.market_information;
 
     let units = account_type == 'Standard' ? ticker.standard_lot : account_type == 'Mini'
@@ -245,7 +245,7 @@ const computeShareLots = (ticker) => {
 
     let pip_value = 0;
 
-    if(account_base_currency == 'yes')
+    if(account_base_currency.toLowerCase() == 'yes')
     {
         pip_value = ((pip_multiplier * units) / form.entry_price).toFixed(4);   
     }
@@ -253,7 +253,7 @@ const computeShareLots = (ticker) => {
     {
         // pip_value = (((pip_multiplier * units) / form.entry_price) * form.acct_curr_pair_price).toFixed(4);
         pip_value = (((pip_multiplier * units) / form.entry_price));
-        if(account_currency_pair == 'yes')
+        if(with_account_currency_pair.toLowerCase() == 'yes')
         {
             pip_value = (pip_value * form.acct_curr_pair_price).toFixed(4);
         }
@@ -264,7 +264,6 @@ const computeShareLots = (ticker) => {
     }
 
     let risk_pips = getRiskPips(ticker);
-
 
     let volume_lot = form.manual_risk_value / (risk_pips * pip_value);
     volume_lot = ceiling(volume_lot, board_lot);
@@ -498,7 +497,6 @@ const getSession = (value) => {
 // })
 
 onMounted(() => {
-    console.log('add entry props', props);
     initFlowbite();
 })
 
@@ -751,7 +749,6 @@ watch(
 
                             <div>
                                 <InputLabel for="economicIndicator" value="Economic Calendar" />
-
                                 <TextInput
                                     id="economicIndicator"
                                     name="economicIndicator"
@@ -849,7 +846,7 @@ watch(
                                     id="manualRiskValue"
                                     name="manualRiskValue"
                                     type="number"
-                                    :max="form.manual_risk_value"
+                                    :max="props.capital.risk_amount"
                                     step="any"
                                     class="mt-1 block w-full"
                                     v-model="form.manual_risk_value"
@@ -884,7 +881,6 @@ watch(
                                     id="riskValue"
                                     name="riskValue"
                                     type="number"
-                                    :max="form.manual_risk_value"
                                     step="any"
                                     class="mt-1 block w-full bg-gray-200"
                                     v-model="form.risk_value"
