@@ -62,10 +62,10 @@ const formData = {
         acct_curr_pair_price: '0', // default 0.6198
         entry_price: '0', // default 0.8916
         stop_price: '0', // default 0.8896
-        // manual_risk_value: props.capital.risk_amount,
-        manual_risk_value: 0, // 9.73
+        manual_risk_value: props.capital.risk_amount,
+        // manual_risk_value: 0, // 9.73
         lots: '',
-        risk_value: props.capital.risk_amount,
+        risk_value: 0,
         risk_pips: 0,
         target_reco: '',
         target_price_1: '',
