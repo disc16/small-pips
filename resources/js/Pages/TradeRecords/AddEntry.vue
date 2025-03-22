@@ -41,7 +41,8 @@ const props = defineProps({
 const showFormModal = ref(false);
 const activeTicker = ref(null);
 const pipValue = ref(0);
-const formAction = ref(props.action)
+// const formAction = ref(props.action)
+const fieldEditable = ref(true);
 
 const formData = {
         id: null,
@@ -91,6 +92,7 @@ const formData = {
         system_holding_period: 0,
         system_percent_profit_loss: 0,
         system_reward_ratio: 0,
+        reason: '',
         system_remarks: '',
         open_chart: '',
         exit_chart: '',
@@ -104,6 +106,7 @@ let form = useForm(formData);
 const orderTypes = ['Setup', 'Market', 'Impulse'];
 const positions = ['Long', 'Short'];
 const sentiments = ['Risk On', 'Risk Off', 'Mixed'];
+const reasons = ['Manual Close', 'Take Profit', 'Stop Loss']
 const analysisList = [];
 
 const showField = computed(() => {
@@ -111,8 +114,8 @@ const showField = computed(() => {
 });
 
 const enableField = computed(() => {
-
-    if(formAction.value == 'edit' || formAction.value == 'new')
+    console.log('enable field', props.action);
+    if(props.action == 'edit' || props.action == 'new')
     {
         return true;   
     }
@@ -126,7 +129,7 @@ const AddEntry = () => {
     let newform = useForm(formData);
 
     Object.assign(form, newform)
-    formAction.value = 'new';
+    emit('newEntry', props.record);
 }
 
 const editForm = () => {
@@ -604,18 +607,23 @@ watch(
     { deep: true }
 )
 
-watch(
-    () => props.action,
-    (value) => {
-        console.log('watch action', value);
-        if(value == 'edit' || value == 'new')
-        {
-            formAction.value = value;
-        }
-               
-    },
-    { deep: true }
-)
+// watch(
+//     () => props.action,
+//     (value) => {
+//         console.log('watch action', value);
+//         if(value == 'edit' || value == 'new')
+//         {
+//             formAction.value = value;
+//             // fieldEditable.value = true;
+//         }
+//         else
+//         {
+//             formAction.value = 'view'
+//         }       
+
+//     },
+//     { deep: true, immediate: true }
+// )
 
 </script>
 
@@ -670,7 +678,7 @@ watch(
                                         id="entry_date" 
                                         v-model="form.entry_time" 
                                         :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
-                                        :disabled="!enableField" 
+                                        :disabled="!enableField"
                                     />
                                 </div>
 
@@ -987,7 +995,13 @@ watch(
                                 <InputLabel for="acutal_exit_date" value="Exit Date" />
 
                                 <div class="relative max-w-sm">
-                                    <input type="date" id="entry_date" v-model="form.actual_exit_date" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2" />
+                                    <input
+                                        type="date" 
+                                        id="entry_date" 
+                                        v-model="form.actual_exit_date" 
+                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2  ${!enableField ? 'bg-gray-200' : ''}`" 
+                                        :disabled="!enableField"
+                                    />
                                 </div>
 
                                 <InputError class="mt-2" :message="form.errors.acutla_exit_date" />
@@ -1062,7 +1076,13 @@ watch(
                                 <InputLabel for="acutal_exit_time" value="Exit Time" />
 
                                 <div class="relative max-w-sm">
-                                    <input type="time" id="acutal_exit_time" v-model="form.actual_exit_time" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full" />
+                                    <input 
+                                        type="time" 
+                                        id="acutal_exit_time" 
+                                        v-model="form.actual_exit_time" 
+                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
+                                        :disabled="!enableField"     
+                                    />
                                 </div>
 
                                 <InputError class="mt-2" :message="form.errors.actual_exit_time" />
@@ -1144,7 +1164,13 @@ watch(
                                 <InputLabel for="system_exit_date" value="Exit Date" />
 
                                 <div class="relative max-w-sm">
-                                    <input type="date" id="system_exit_date" v-model="form.system_exit_date" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2" :disabled="!enableField" />
+                                    <input 
+                                        type="date" 
+                                        id="system_exit_date" 
+                                        v-model="form.system_exit_date" 
+                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2  ${!enableField ? 'bg-gray-200' : ''}`"
+                                        :disabled="!enableField" 
+                                    />
                                 </div>
 
                                 <InputError class="mt-2" :message="form.errors.acutla_exit_date" />
@@ -1224,7 +1250,13 @@ watch(
                                 <InputLabel for="system_exit_time" value="Exit Time" />
 
                                 <div class="relative max-w-sm">
-                                    <input type="time" id="system_exit_time" v-model="form.system_exit_time" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full" :disabled="!enableField" />
+                                    <input 
+                                        type="time" 
+                                        id="system_exit_time" 
+                                        v-model="form.system_exit_time" 
+                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
+                                        :disabled="!enableField" 
+                                    />
                                 </div>
 
                                 <InputError class="mt-2" :message="form.errors.system_exit_time" />
@@ -1279,9 +1311,13 @@ watch(
                             </div>
 
                             <div v-show="showField" >
-                                <div>
-                                    <!-- Leave empty -->
-                                </div>
+                                <InputLabel for="reason" value="Reason" />
+
+                                <SelectInput name="reason" id="reason" v-model="form.reason" :disabled="!enableField" :class="` ${!enableField ? 'bg-gray-200' : ''}`" >
+                                    <option v-for="(reason, index) in reasons" :key="index"  >{{ reason }}</option>
+                                </SelectInput>
+
+                                <InputError class="mt-2" :message="form.errors.system_reward_ratio" />
                             </div>
 
                             
@@ -1338,6 +1374,7 @@ watch(
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.note"
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.note" />
@@ -1351,6 +1388,7 @@ watch(
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="form.session"
+                                    :disabled="!enableField" 
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.session" />

@@ -5,7 +5,7 @@ import NavLink from '@/Components/atom/NavLink.vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
 import Modal from '@/Components/molecule/Modal.vue';
 import AddEntry from './AddEntry.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 
 import { DataTable } from 'simple-datatables';
 import 'simple-datatables/dist/style.css';
@@ -34,6 +34,10 @@ const props = defineProps({
 const activeItem = ref(null);
 const modalAction = ref(null);
 
+const newEntry = () => {
+    modalAction.value = 'new';
+}
+
 const editViewedForm = (data) => {
     console.log('editViewedForm');
     setTimeout(() => {
@@ -52,7 +56,6 @@ const viewItem = (data) => {
 }
 
 const onRowClick = () => {
-    console.log('aaahhh');
 }
 
 const clearActiveItem = () => {
@@ -115,9 +118,33 @@ const rowColor = (item) => {
 }
 
 const gotoPage = (key) => {
-    console.log('go to page', key);
     this.$inertia.post(`/trade-records/entries?page=${key}`);
 }
+
+const previousButtonPageNumber = computed(() => {
+
+    if(props.entries.current_page > 1)
+    {
+        return props.entries.current_page - 1;        
+    }
+
+    return 1;
+});
+
+const nextButtonPageNumber = computed(() => {
+    let current = props.entries.current_page;
+
+    if(current < computePages.value)
+    {
+        return current + 1;        
+    }
+
+    return computePages.value;
+});
+
+const computePages = computed(() => {
+    return parseInt((props.entries.total / props.entries.per_page).toFixed(0));
+});
 
 onMounted(() => {
     console.log('Entries Mounted', props);
@@ -172,6 +199,7 @@ onMounted(() => {
                                 :tradingTime="tradingTime"
                                 @clearForm="clearActiveItem"
                                 @editViewedForm="editViewedForm"
+                                @newEntry="newEntry"
                             />
                         </div>
                         
@@ -333,21 +361,27 @@ onMounted(() => {
                                     aria-label="Table navigation"
                                 >
                                     <span class="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">Showing <span class="font-semibold text-gray-900 dark:text-white">{{entries.from}}-{{entries.to}}</span> of <span class="font-semibold text-gray-900 dark:text-white">{{entries.total}}</span></span>
-                                    <!-- <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                                    <ul v-if="computePages" class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
                                         <li>
-                                            <a :href="`${entries.prev_page_url}`" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+                                            <!-- <a :href="`${entries.prev_page_url}`" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a> -->
+                                            <Link 
+                                                class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                                :href="`/trade-records/entries?page=${previousButtonPageNumber}`" 
+                                                method="get" 
+                                            >
+                                                Previous
+                                            </Link>
                                         </li>
-
-                                        <li v-for="key in (entries.total / entries.per_page)">
+                                        <li v-for="key in computePages">
                                             <p
                                                 class="cursor-pointer flex items-center justify-center px-3 h-8 leading-tight dark:hover:bg-gray-700 dark:hover:text-white"
                                                 :class="{'text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700': key == entries.current_page, 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700': key != entries.current_page}"
                                             >
-                                                <Link :href="`/trade-records/entries?page=${key}`" method="post" >{{ key }}</Link>
+                                                <Link :href="`/trade-records/entries?page=${key}`" method="get" >{{ key }}</Link>
                                             </p>
                                         </li>
 
-                                        <li>
+                                        <!-- <li>
                                             <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
                                         </li>
                                         <li>
@@ -355,11 +389,18 @@ onMounted(() => {
                                         </li>
                                         <li>
                                             <a href="#" aria-current="page" class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-                                        </li>
+                                        </li> -->
                                         <li>
-                                            <a :href="`${entries.next_page_url}`" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+                                            <!-- <a :href="`${entries.next_page_url}`" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a> -->
+                                            <Link 
+                                                class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                                :href="`/trade-records/entries?page=${nextButtonPageNumber}`" 
+                                                method="get" 
+                                            >
+                                                Next
+                                            </Link>
                                         </li>
-                                    </ul> -->
+                                    </ul>
                                 </nav>
                             </div>
                             

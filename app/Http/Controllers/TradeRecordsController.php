@@ -181,6 +181,7 @@ class TradeRecordsController extends Controller
         $tradeRecords->system_holding_period = $request->system_holding_period;
         $tradeRecords->system_percent_profit_loss = $request->system_percent_profit_loss;
         $tradeRecords->system_reward_ratio = $request->system_reward_ratio;
+        $tradeRecords->reason = $request->reason;
 
         $tradeRecords->save();
 
@@ -240,7 +241,7 @@ class TradeRecordsController extends Controller
 
      public function getRecordsOverview() {
         $user = auth()->user();
-        $entries = TradeRecords::with('tickerPair', 'currencyPrice')->where('user_id', auth()->user()->id)->latest()->paginate(2);
+        $entries = TradeRecords::with('tickerPair', 'currencyPrice')->where('user_id', auth()->user()->id)->latest()->paginate(10);
         $tickers = TickerPair::all();
         $strategies = TradingStrategy::where('user_id', auth()->user()->id)->get();
         $capital = CapitalAndRiskMgmt::where('user_id', auth()->user()->id)->first();

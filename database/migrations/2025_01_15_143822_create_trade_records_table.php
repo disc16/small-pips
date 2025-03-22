@@ -59,6 +59,7 @@ return new class extends Migration
             $table->string('exit_chart')->nullable();
             $table->longtext('note')->nullable();
             $table->string('session')->nullable();
+            $table->string('reason')->nullable();
             $table->foreignId('currency_price_id')->index()->nullable();
             $table->timestamps();
         });
