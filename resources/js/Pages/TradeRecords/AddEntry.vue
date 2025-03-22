@@ -114,7 +114,6 @@ const showField = computed(() => {
 });
 
 const enableField = computed(() => {
-    console.log('enable field', props.action);
     if(props.action == 'edit' || props.action == 'new')
     {
         return true;   
@@ -124,10 +123,12 @@ const enableField = computed(() => {
 });
 
 const AddEntry = () => {
+    console.log('add entry');
     openFormModal();
 
     let newform = useForm(formData);
 
+    // console.log('whyyy', formData, form, newform);
     Object.assign(form, newform)
     emit('newEntry', props.record);
 }
