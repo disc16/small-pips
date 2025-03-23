@@ -123,7 +123,6 @@ const enableField = computed(() => {
 });
 
 const AddEntry = () => {
-    console.log('add entry');
     openFormModal();
 
     let newform = useForm(formData);
@@ -157,7 +156,6 @@ const editEntry = (value) => {
             entry_time: lightFormat(new Date(concatEntryDate), 'HH:mm'),
             actual_exit_time: lightFormat(concatActualExitDate, 'HH:mm'),
             system_exit_time: lightFormat(concatSystemExitDate, 'HH:mm'),
-            actual_exit_price: 0.8946
         });
     Object.assign(
         form,
@@ -285,7 +283,7 @@ const computeShareLots = (ticker) => {
     computeRiskValue(risk_pips, volume_lot, pip_value);
 
     pipValue.value = pip_value;
-    form.lots = volume_lot;
+    form.lots = volume_lot == 'NaN' ? '' : volume_lot;
     form.risk_pips = risk_pips;
     form.pip_value = pipValue;
 }
@@ -301,7 +299,7 @@ const computeRiskValue = (risk_pips, volume_lot, pip_value) => {
     let control = ((parseFloat(risk_value) / parseFloat(capital)) * 100).toFixed(1);
 
     form.risk_value = risk_value;
-    form.percent_control = control;
+    form.percent_control = control == 'NaN' ? '' : control;
 }
 
 const computeTargets = (ticker) => {
@@ -356,9 +354,10 @@ const computeTargets = (ticker) => {
         })
     }
 
-    form.target_price_1 = target1;
-    form.target_price_2 = target2;
-    form.target_price_3 = target3;
+    console.log('compute targets', target1);
+    form.target_price_1 = target1.toFixed(5);
+    form.target_price_2 = target2.toFixed(5);
+    form.target_price_3 = target3.toFixed(5);
     form.target_reco = target_reco;
     
 }
@@ -419,7 +418,7 @@ const computeActualProfitOrLoss = (ticker) => {
     form.actual_holding_period = days;
     form.actual_percent_profit_loss = percentLoss.toFixed(2);
     form.actual_reward_ratio = rrr.toFixed(2);
-
+    console.log('sattus', status);
     form.actual_status = status;
 
 }

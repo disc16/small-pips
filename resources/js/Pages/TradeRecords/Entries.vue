@@ -6,8 +6,8 @@ import { Head, useForm, Link } from '@inertiajs/vue3';
 import Modal from '@/Components/molecule/Modal.vue';
 import AddEntry from './AddEntry.vue';
 import { onMounted, ref, computed } from 'vue';
+import { format, lightFormat } from 'date-fns';
 
-import { DataTable } from 'simple-datatables';
 import 'simple-datatables/dist/style.css';
 
 const props = defineProps({
@@ -75,11 +75,11 @@ const getPLPips = (item) => {
     {
         if(position == "Long")
         {
-            return ((actual_exit_price - entry_price) / pip_multiplier).toFixed(2);
+            return ((actual_exit_price - entry_price) / pip_multiplier).toFixed(0);
         }
         else
         {
-            return ((entry_price - actual_exit_price) / pip_multiplier).toFixed(2);
+            return ((entry_price - actual_exit_price) / pip_multiplier).toFixed(0);
         }
     }
     
@@ -100,7 +100,7 @@ const rowColor = (item) => {
 
             break;
 
-        case 'INVALID':
+        case 'Invalid':
             return 'text-gray-600'
             
             break;
@@ -120,6 +120,12 @@ const rowColor = (item) => {
 const gotoPage = (key) => {
     this.$inertia.post(`/trade-records/entries?page=${key}`);
 }
+
+const formatTime = (date, time) => {
+    let d = new Date(`${date} ${time}`);
+
+    return lightFormat(d, 'hh:mm a');
+};
 
 const previousButtonPageNumber = computed(() => {
 
@@ -188,7 +194,7 @@ onMounted(() => {
                                     Trade Entries
                                 </h2>
                             </div>
-                            {{ modalAction }}
+                        
                             <AddEntry 
                                 :record="activeItem" 
                                 :tickers="tickers" 
@@ -213,6 +219,9 @@ onMounted(() => {
                                             <span class="flex items-center">
                                                 No
                                             </span>
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Market Type
                                         </th>
                                         <th scope="col" class="px-6 py-3">
                                             Session
@@ -287,6 +296,9 @@ onMounted(() => {
                                             {{ item.id }}
                                         </th>
                                         <td class="px-6 py-4">
+                                            {{ item.ticker_pair.market_type }}
+                                        </td>
+                                        <td class="px-6 py-4">
                                             {{ item.session }}
                                         </td>
                                         <td class="px-6 py-4">
@@ -305,36 +317,36 @@ onMounted(() => {
                                             {{ item.entry_date }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ item.entry_time }}
+                                            {{ formatTime(item.entry_date, item.entry_time) }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-right">
                                             {{ item.entry_price }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-right">
                                             {{ item.stop_price }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-right">
                                             {{ item.actual_exit_price }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-right">
                                             {{ item.lots }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-right">
                                             {{ item.risk_value }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-right">
                                             {{ getPercentControl(item) }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-right">
                                            {{ getPLPips(item) }}
                                         </td>
-                                        <td class="px-6 py-4">
-                                            {{ item.actual_profit_loss }}
+                                        <td class="px-6 py-4 text-right">
+                                            {{ item.actual_actual_profit_loss }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-right">
                                             {{ item.actual_percent_profit_loss }}
                                         </td>
-                                        <td class="px-6 py-4">
+                                        <td class="px-6 py-4 text-right">
                                             {{ item.actual_reward_ratio }}
                                         </td>
                                         <td class="px-6 py-4">
@@ -361,7 +373,7 @@ onMounted(() => {
                                     aria-label="Table navigation"
                                 >
                                     <span class="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">Showing <span class="font-semibold text-gray-900 dark:text-white">{{entries.from}}-{{entries.to}}</span> of <span class="font-semibold text-gray-900 dark:text-white">{{entries.total}}</span></span>
-                                    <!-- <ul v-if="computePages" class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+                                    <ul v-if="computePages" class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
                                         <li>
                                             <Link 
                                                 class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
@@ -389,7 +401,7 @@ onMounted(() => {
                                                 Next
                                             </Link>
                                         </li>
-                                    </ul> -->
+                                    </ul>
                                 </nav>
                             </div>
                             

@@ -74,6 +74,7 @@ class TradeRecordsController extends Controller
         $record->exit_chart = $request->exit_chart;
         $record->note = $request->note;
         $record->session = $request->session;
+        $record->actual_status = 'Open';
 
 
         $record->save();
