@@ -8,6 +8,7 @@ import SelectInput from '@/Components/atom/SelectInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import Modal from '@/Components/molecule/Modal.vue';
 import { nextTick, ref, onMounted, watch, onUpdated, computed, onBeforeMount } from 'vue';
+import { watchDebounced } from '@vueuse/core'
 
 import { lightFormat, differenceInDays, differenceInHours, differenceInMinutes } from "date-fns";
 import { initFlowbite } from 'flowbite'
@@ -518,7 +519,6 @@ onUpdated(() => {
 watch(
     () => form.position,
     (value) => {
-
         if(activeTicker)
         {
             computeSentiment(value);
@@ -530,7 +530,7 @@ watch(
 watch(
     () => form.entry_time,
     (value) => {
-
+        console.log('watch entry time', value);
         getSession(value);
     },
     { deep: true }
@@ -539,7 +539,6 @@ watch(
 watch(
     () => form.ticker,
     (value) => {
-
         let getTicker = props.tickers.filter(e => e.id == value);
         activeTicker.value = getTicker[0];
 
@@ -548,15 +547,16 @@ watch(
     { deep: true }
 )
 
+// watchDebounced(
+//  form,
+//   () => { console.log('changed!') },
+//   { debounce: 500, maxWait: 1000 },
+// )
+
 watch(
     () => form,
     (value) => {
-
-        if(value.entry_time)
-        {
-            getSession(value.entry_time);
-        }
-
+        console.log('watch form', value, value.processing, value.isDirty)
         if(!value.processing && value.isDirty)
         {
             if(activeTicker.value)
@@ -592,7 +592,6 @@ watch(
 watch(
     () => props.record,
     (value) => {
-
         if(value)
         {
             if(props.action == 'edit')

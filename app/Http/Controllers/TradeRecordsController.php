@@ -215,9 +215,12 @@ class TradeRecordsController extends Controller
         foreach ($data as $key => $value) {
             $datetime = Carbon::createFromFormat('H:i:s', $value['ph_time']);
 
+            \Log::info('entry time '.$entry_time);
+            \Log::info('date time '.$datetime);
             // if(Carbon::parse($entry_time)->gt(Carbon::parse($datetime)))
-            if($entry_time->gt($datetime))
+            if($entry_time->gte($datetime))
             {
+                \Log::info('waaaaaaaaaaaaaaaaAAAAAAAAA');
                 if($db_time)
                 {
                     // \Log::info('wooooooo .'.$db_time);
