@@ -509,6 +509,7 @@ const getSession = (value) => {
 // })
 
 onMounted(() => {
+    console.log('Add form mounted');
     initFlowbite();
 })
 
