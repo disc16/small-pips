@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('capital_and_risk_mgmts', function (Blueprint $table) {
             $table->id();
+            $table->string('trading_account')->nullable();
             $table->foreignId('user_id')->nullable()->index();
             $table->double('capital')->nullable;
             $table->float('risk_percentage')->nullable();

@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('market_information', function (Blueprint $table) {
+        Schema::create('account_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->foreignId('account_type_id')->index();
-            // $table->string('account_type')->nullable();
-            $table->foreignId('currency_id')->index();
+            $table->string('name');
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('market_information');
+        Schema::dropIfExists('account_types');
     }
 };

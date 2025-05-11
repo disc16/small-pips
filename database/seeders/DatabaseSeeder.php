@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TradingStrategySeeder::class,
             CurrencySeeder::class,
+            AccountSeeder::class,
             MarketInformationSeeder::class,
         ]);
 

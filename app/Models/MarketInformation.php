@@ -11,4 +11,9 @@ class MarketInformation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function accountType(): belongsTo
+    {
+        return $this->belongsTo(AccountType::class);
+    }
 }

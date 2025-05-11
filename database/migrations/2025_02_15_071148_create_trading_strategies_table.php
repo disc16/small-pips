@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->index();
             $table->string('strategy');
-            $table->string('notes')->nullable();
+            $table->string('type')->nullable();
             $table->string('chart')->nullable();
             $table->timestamps();
         });
