@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\TradingStrategy;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class TradingStrategyController extends Controller
 {
@@ -28,7 +31,19 @@ class TradingStrategyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new TradingStrategy;
+        $data->user_id = auth()->user()->id;
+        $data->strategy = $request->strategy;
+        $data->type = $request->type;
+        $data->save();
+
+        $user = User::with('marketInformation.accountType', 'tradingStrategies')->where('id', auth()->user()->id)->first();
+        $strategies = TradingStrategy::where('user_id', auth()->user()->id)->get();
+
+        return Redirect::route('trade-settings.edit', [
+            'user' => $user,
+            'strategies' => $strategies
+        ]);
     }
 
     /**
@@ -52,7 +67,18 @@ class TradingStrategyController extends Controller
      */
     public function update(Request $request, TradingStrategy $tradingStrategy)
     {
-        //
+        $data = TradingStrategy::where('id', $request->id)->first();
+        $data->strategy = $request->strategy;
+        $data->type = $request->type;
+        $data->save();
+
+        $user = User::with('marketInformation.accountType', 'tradingStrategies')->where('id', auth()->user()->id)->first();
+        $strategies = TradingStrategy::where('user_id', auth()->user()->id)->get();
+
+        return Redirect::route('trade-settings.edit', [
+            'user' => $user,
+            'strategies' => $strategies
+        ]);
     }
 
     /**

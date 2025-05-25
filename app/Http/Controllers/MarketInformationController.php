@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\MarketInformation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class MarketInformationController extends Controller
 {
@@ -53,6 +55,15 @@ class MarketInformationController extends Controller
     public function update(Request $request, MarketInformation $marketInformation)
     {
         //
+        \Log::info(var_export($request->account_type, true));
+        \Log::info(auth()->user()->id);
+
+        $data = MarketInformation::where('user_id', auth()->user()->id)->first();
+        $data->account_type_id = $request->account_type;
+        $data->currency_id = $request->currency;
+        $data->save();
+
+        return Redirect::route('trade-settings.edit');
     }
 
     /**

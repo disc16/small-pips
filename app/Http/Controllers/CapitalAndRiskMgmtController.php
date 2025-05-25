@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\CapitalAndRiskMgmt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class CapitalAndRiskMgmtController extends Controller
 {
@@ -28,7 +30,41 @@ class CapitalAndRiskMgmtController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        \Log::info('Capital and Risk Mgmt Store');
+        \Log::info(var_export($request->trading_account, true));
+        $data = new CapitalAndRiskMgmt;
+
+        $data->capital = $request->capital;
+        $data->user_id = auth()->user()->id;
+        $data->trading_account = $request->trading_account;
+        $data->risk_percentage = (float) $request->risk_percentage;
+        $data->risk_amount = $request->risk_amount;
+        $data->targets = json_encode([
+            'target1' => [
+                'rrr' => $request->target1_rrr,
+                'pips' => $request->target1_pips,
+                'min_pips' => $request->target1_min_pips
+            ],
+            'target2' => [
+                'rrr' => $request->target1_rrr,
+                'pips' => $request->target2_pips,
+                'min_pips' => $request->target2_min_pips
+            ],
+            'target3' => [
+                'rrr' => $request->target1_rrr,
+                'pips' => $request->target3_pips,
+                'min_pips' => $request->target3_min_pips
+            ]
+        ]);
+        $data->save();
+
+        \Log::info('heeeey');
+
+        $capitals = CapitalAndRiskMgmt::where('user_id', auth()->user()->id)->get();
+
+        return Redirect::route('trade-settings.edit', [
+            'capitals' => $capitals
+        ]);
     }
 
     /**
@@ -52,7 +88,35 @@ class CapitalAndRiskMgmtController extends Controller
      */
     public function update(Request $request, CapitalAndRiskMgmt $capitalAndRiskMgmt)
     {
-        //
+        $data = CapitalAndRiskMgmt::where('id', $request->id)->first();
+        $data->trading_account = $request->trading_account;
+        $data->risk_percentage = (float) $request->risk_percentage;
+        $data->risk_amount = $request->risk_amount;
+        $data->targets = json_encode([
+            'target1' => [
+                'rrr' => $request->target1_rrr,
+                'pips' => $request->target1_pips,
+                'min_pips' => $request->target1_min_pips
+            ],
+            'target2' => [
+                'rrr' => $request->target2_rrr,
+                'pips' => $request->target2_pips,
+                'min_pips' => $request->target2_min_pips
+            ],
+            'target3' => [
+                'rrr' => $request->target3_rrr,
+                'pips' => $request->target3_pips,
+                'min_pips' => $request->target3_min_pips
+            ]
+        ]);
+
+        $data->save();
+
+        $capitals = CapitalAndRiskMgmt::where('user_id', auth()->user()->id)->get();
+
+        return Redirect::route('trade-settings.edit', [
+            'capitals' => $capitals
+        ]);
     }
 
     /**

@@ -16,21 +16,21 @@ class MarketInformationSeeder extends Seeder
         MarketInformation::create([
             'user_id' => 1,
             // 'account_type' => 'Basic',
-            'account_type' => 0,
+            'account_type_id' => 1,
             'currency_id' => 8
         ]);
 
         MarketInformation::create([
             'user_id' => 2,
             // 'account_type' => 'Basic',
-            'account_type' => 0,
+            'account_type_id' => 1,
             'currency_id' => 8
         ]);
 
         MarketInformation::create([
             'user_id' => 3,
             // 'account_type' => 'Basic',
-            'account_type' => 1,
+            'account_type_id' => 2,
             'currency_id' => 8
         ]);
     }

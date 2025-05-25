@@ -24,13 +24,13 @@ class UserSeeder extends Seeder
             'name' => 'John Doe',
             'email' => 'john.doe@trade.com',
             'password' => 'trader1'
-        ])->assignRole('User');
+        ])->assignRole(['User', 'Premium']);
 
         $user2 = User::factory()->create([
             'name' => 'Jane Dee',
             'email' => 'jane.dee@trade.com',
             'password' => 'trader1'
-        ])->assignRole('User');
+        ])->assignRole(['User', 'Basic']);
 
         \Log::info('USER: ' . var_export($admin->id, true));
 

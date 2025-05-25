@@ -29,49 +29,49 @@ class TradingStrategySeeder extends Seeder
         TradingStrategy::create([
             'user_id' => $id,
             'strategy' => 'Momentum - Slingshot',
-            'notes' => 'Trend Following'
+            'type' => 'Trend Following'
         ]);
 
         TradingStrategy::create([
             'user_id' => $id,
             'strategy' => 'Momentum - Boomers',
-            'notes' => 'Trend Following'
+            'type' => 'Trend Following'
         ]);
 
         TradingStrategy::create([
             'user_id' => $id,
             'strategy' => 'Swing - Pullback',
-            'notes' => 'Trend Following'
+            'type' => 'Trend Following'
         ]);
 
         TradingStrategy::create([
             'user_id' => $id,
             'strategy' => 'Swing - Range',
-            'notes' => 'Trend Following'
+            'type' => 'Trend Following'
         ]);
 
         TradingStrategy::create([
             'user_id' => $id,
             'strategy' => 'Position - Coils',
-            'notes' => 'Waiting Game'
+            'type' => 'Waiting Game'
         ]);
 
         TradingStrategy::create([
             'user_id' => $id,
             'strategy' => 'Position - Bluesky',
-            'notes' => 'Waiting Game'
+            'type' => 'Waiting Game'
         ]);
         
         TradingStrategy::create([
             'user_id' => $id,
             'strategy' => 'Capitulation - Reversal',
-            'notes' => 'Counter Trading'
+            'type' => 'Counter Trading'
         ]);
         
         TradingStrategy::create([
             'user_id' => $id,
             'strategy' => 'Capitulation - Retest',
-            'notes' => 'Counter Trading'
+            'type' => 'Counter Trading'
         ]);
 
     }

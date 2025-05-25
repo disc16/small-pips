@@ -237,6 +237,11 @@ onMounted(() => {
                                 Profile
                             </DropdownLink>
                             <DropdownLink
+                                :href="route('trade-settings.edit')"
+                            >
+                                Trade Settings
+                            </DropdownLink>
+                            <DropdownLink
                                 :href="route('logout')"
                                 method="post"
                                 as="button"

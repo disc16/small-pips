@@ -6,6 +6,7 @@ import InputLabel from '@/Components/atom/InputLabel.vue';
 import PrimaryButton from '@/Components/atom/PrimaryButton.vue';
 import TextInput from '@/Components/atom/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import ApplicationLogo from '@/Components/atom/ApplicationLogo.vue';
 
 defineProps({
     canResetPassword: {
@@ -30,11 +31,19 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
+    <GuestLayout class="-mt-24">
         <Head title="Log in" />
 
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
+        </div>
+
+        <div class="text-4xl text-center mb-4 text-blue-800">
+            Welcome to Basic PIP$!
+        </div>
+
+        <div class="flex justify-center w-full mb-4">
+            <ApplicationLogo class="h-40 w-40 fill-current text-gray-500" />
         </div>
 
         <form @submit.prevent="submit">
@@ -69,16 +78,36 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4 block">
+            <!-- <div class="mt-4 block">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
                     <span class="ms-2 text-sm text-gray-600"
                         >Remember me</span
                     >
                 </label>
+            </div> -->
+
+            <div class="mt-4">
+                <PrimaryButton
+                    class="w-full justify-center"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                >
+                    Log in
+                </PrimaryButton>
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
+            <div class="flex justify-center mt-2">
+                <Link
+                    v-if="canResetPassword"
+                    :href="route('password.request')"
+                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                    Forgot your password?
+                </Link>
+            </div>
+
+            <!-- <div class="mt-4 flex items-center justify-end">
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
@@ -94,7 +123,7 @@ const submit = () => {
                 >
                     Log in
                 </PrimaryButton>
-            </div>
+            </div> -->
         </form>
     </GuestLayout>
 </template>
