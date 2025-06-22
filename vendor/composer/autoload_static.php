@@ -91,6 +91,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\Clock\\' => 24,
             'Spatie\\Permission\\' => 18,
+            'SheetDB\\' => 8,
         ),
         'R' => 
         array (
@@ -330,6 +331,10 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         array (
             0 => __DIR__ . '/..' . '/spatie/laravel-permission/src',
         ),
+        'SheetDB\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sheetdb/sheetdb-php/src',
+        ),
         'Ramsey\\Uuid\\' => 
         array (
             0 => __DIR__ . '/..' . '/ramsey/uuid/src',
@@ -548,6 +553,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
     );
 
     public static $classMap = array (
+        'App\\Http\\Controllers\\AccountTypeController' => __DIR__ . '/../..' . '/app/Http/Controllers/AccountTypeController.php',
         'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',
         'App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/EmailVerificationNotificationController.php',
@@ -567,6 +573,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'App\\Http\\Controllers\\TickerPairController' => __DIR__ . '/../..' . '/app/Http/Controllers/TickerPairController.php',
         'App\\Http\\Controllers\\TradePerformanceController' => __DIR__ . '/../..' . '/app/Http/Controllers/TradePerformanceController.php',
         'App\\Http\\Controllers\\TradeRecordsController' => __DIR__ . '/../..' . '/app/Http/Controllers/TradeRecordsController.php',
+        'App\\Http\\Controllers\\TradeSettingsController' => __DIR__ . '/../..' . '/app/Http/Controllers/TradeSettingsController.php',
         'App\\Http\\Controllers\\TradingStrategyController' => __DIR__ . '/../..' . '/app/Http/Controllers/TradingStrategyController.php',
         'App\\Http\\Controllers\\TradingTimeController' => __DIR__ . '/../..' . '/app/Http/Controllers/TradingTimeController.php',
         'App\\Http\\Controllers\\UserPersonController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserPersonController.php',
@@ -577,6 +584,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'App\\Http\\Requests\\StoreTradeRecordsRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreTradeRecordsRequest.php',
         'App\\Http\\Requests\\UpdateTradePerformanceRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateTradePerformanceRequest.php',
         'App\\Http\\Requests\\UpdateTradeRecordsRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateTradeRecordsRequest.php',
+        'App\\Models\\AccountType' => __DIR__ . '/../..' . '/app/Models/AccountType.php',
         'App\\Models\\CapitalAndRiskMgmt' => __DIR__ . '/../..' . '/app/Models/CapitalAndRiskMgmt.php',
         'App\\Models\\Currency' => __DIR__ . '/../..' . '/app/Models/Currency.php',
         'App\\Models\\CurrencyPrice' => __DIR__ . '/../..' . '/app/Models/CurrencyPrice.php',
@@ -708,6 +716,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'Cron\\MinutesField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MinutesField.php',
         'Cron\\MonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
+        'Database\\Seeders\\AccountTypeSeeder' => __DIR__ . '/../..' . '/database/seeders/AccountTypeSeeder.php',
         'Database\\Seeders\\CapitalAndRiskMgmtSeeder' => __DIR__ . '/../..' . '/database/seeders/CapitalAndRiskMgmtSeeder.php',
         'Database\\Seeders\\CurrencySeeder' => __DIR__ . '/../..' . '/database/seeders/CurrencySeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
@@ -5669,6 +5678,8 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'SebastianBergmann\\Type\\UnknownType' => __DIR__ . '/..' . '/sebastian/type/src/type/UnknownType.php',
         'SebastianBergmann\\Type\\VoidType' => __DIR__ . '/..' . '/sebastian/type/src/type/VoidType.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'SheetDB\\Connection' => __DIR__ . '/..' . '/sheetdb/sheetdb-php/src/Connection.php',
+        'SheetDB\\SheetDB' => __DIR__ . '/..' . '/sheetdb/sheetdb-php/src/SheetDB.php',
         'Spatie\\Permission\\Commands\\CacheReset' => __DIR__ . '/..' . '/spatie/laravel-permission/src/Commands/CacheReset.php',
         'Spatie\\Permission\\Commands\\CreatePermission' => __DIR__ . '/..' . '/spatie/laravel-permission/src/Commands/CreatePermission.php',
         'Spatie\\Permission\\Commands\\CreateRole' => __DIR__ . '/..' . '/spatie/laravel-permission/src/Commands/CreateRole.php',

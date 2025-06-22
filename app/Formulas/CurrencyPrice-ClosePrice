@@ -1,0 +1,73 @@
+=IFERROR(
+    IF(
+        tbl_currencyprice_today[Date]>TODAY(),
+        "",
+        IF(
+            tbl_currencyprice_today[Orig_Pair]="Yes",
+            IF(
+                tbl_currencyprice_today[JPY_Pair]="Yes",
+                VLOOKUP(tbl_currencyprice_today[Ticker_Pair],fmp_api!$A:$I,3,0)/100,
+                VLOOKUP(tbl_currencyprice_today[Ticker_Pair],fmp_api!$A:$I,3,0)),
+            1/IF(
+                tbl_currencyprice_today[JPY_Pair]="Yes",
+                VLOOKUP(tbl_currencyprice_today[Ticker_Pair],fmp_api!$A:$I,3,0)/100,
+                VLOOKUP(tbl_currencyprice_today[Ticker_Pair],fmp_api!$A:$I,3,0))
+        )
+    ),
+    IF(
+        tbl_currencyprice_today[Date]>TODAY(),
+        "", 
+        IF(
+            tbl_currencyprice_today[Orig_Pair]="Yes",
+            IF(
+                tbl_currencyprice_today[JPY_Pair]="Yes",
+                GOOGLEFINANCE("CURRENCY:" & tbl_currencyprice_today[Ticker_Pair])/100,
+                GOOGLEFINANCE("CURRENCY:" & tbl_currencyprice_today[Ticker_Pair])
+            ),
+            1/IF(
+                tbl_currencyprice_today[JPY_Pair]="Yes",
+                GOOGLEFINANCE("CURRENCY:" & tbl_currencyprice_today[Ticker_Pair])/100,
+                GOOGLEFINANCE("CURRENCY:" & tbl_currencyprice_today[Ticker_Pair])
+            )
+        )
+    )
+)
+
+
+
+
+
+=IFERROR(
+    IFERROR(
+        IF(
+            tbl_currencyprice_today[Date]>TODAY(),
+            "", 
+            IF(
+                tbl_currencyprice_today[Orig_Pair]="Yes",
+                IF(
+                    tbl_currencyprice_today[JPY_Pair]="Yes",
+                    VLOOKUP(tbl_currencyprice_today[Ticker_Pair],fmp_api!$A:$I,3,0)/100,
+                    VLOOKUP(tbl_currencyprice_today[Ticker_Pair],fmp_api!$A:$I,3,0)
+                ),
+                1/IF(
+                    tbl_currencyprice_today[JPY_Pair]="Yes",
+                    VLOOKUP(tbl_currencyprice_today[Ticker_Pair],fmp_api!$A:$I,3,0)/100,
+                    VLOOKUP(tbl_currencyprice_today[Ticker_Pair],fmp_api!$A:$I,3,0)
+                )
+            )
+        ),
+        IF(
+            tbl_currencyprice_today[Orig_Pair]="Yes",
+            IF(
+                tbl_currencyprice_today[JPY_Pair]="Yes",
+                VLOOKUP(CONCAT(tbl_currencyprice_today[Ticker_Pair],VALUE(tbl_currencyprice_today[Date])),tradermade_api!$H:$M,6,0)/100,
+                VLOOKUP(CONCAT(tbl_currencyprice_today[Ticker_Pair],VALUE(tbl_currencyprice_today[Date])),tradermade_api!$H:$M,6,0)
+            ),
+            1/IF(
+                tbl_currencyprice_today[JPY_Pair]="Yes",
+                VLOOKUP(CONCAT(tbl_currencyprice_today[Ticker_Pair],VALUE(tbl_currencyprice_today[Date])),tradermade_api!$H:$M,6,0)/100,
+                VLOOKUP(CONCAT(tbl_currencyprice_today[Ticker_Pair],VALUE(tbl_currencyprice_today[Date])),tradermade_api!$H:$M,6,0)
+            )
+        )
+    ),
+0)

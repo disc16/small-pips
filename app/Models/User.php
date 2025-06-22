@@ -74,4 +74,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(CapitalAndRiskMgmt::class);
     }
+
+    public function accountType():belongsTo
+    {
+        return $this->belongsTo(AccountType::class);
+    }
 }

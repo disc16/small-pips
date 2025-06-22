@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Http\\Controllers\\AccountTypeController' => $baseDir . '/app/Http/Controllers/AccountTypeController.php',
     'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => $baseDir . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
     'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => $baseDir . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',
     'App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController' => $baseDir . '/app/Http/Controllers/Auth/EmailVerificationNotificationController.php',
@@ -25,6 +26,7 @@ return array(
     'App\\Http\\Controllers\\TickerPairController' => $baseDir . '/app/Http/Controllers/TickerPairController.php',
     'App\\Http\\Controllers\\TradePerformanceController' => $baseDir . '/app/Http/Controllers/TradePerformanceController.php',
     'App\\Http\\Controllers\\TradeRecordsController' => $baseDir . '/app/Http/Controllers/TradeRecordsController.php',
+    'App\\Http\\Controllers\\TradeSettingsController' => $baseDir . '/app/Http/Controllers/TradeSettingsController.php',
     'App\\Http\\Controllers\\TradingStrategyController' => $baseDir . '/app/Http/Controllers/TradingStrategyController.php',
     'App\\Http\\Controllers\\TradingTimeController' => $baseDir . '/app/Http/Controllers/TradingTimeController.php',
     'App\\Http\\Controllers\\UserPersonController' => $baseDir . '/app/Http/Controllers/UserPersonController.php',
@@ -35,6 +37,7 @@ return array(
     'App\\Http\\Requests\\StoreTradeRecordsRequest' => $baseDir . '/app/Http/Requests/StoreTradeRecordsRequest.php',
     'App\\Http\\Requests\\UpdateTradePerformanceRequest' => $baseDir . '/app/Http/Requests/UpdateTradePerformanceRequest.php',
     'App\\Http\\Requests\\UpdateTradeRecordsRequest' => $baseDir . '/app/Http/Requests/UpdateTradeRecordsRequest.php',
+    'App\\Models\\AccountType' => $baseDir . '/app/Models/AccountType.php',
     'App\\Models\\CapitalAndRiskMgmt' => $baseDir . '/app/Models/CapitalAndRiskMgmt.php',
     'App\\Models\\Currency' => $baseDir . '/app/Models/Currency.php',
     'App\\Models\\CurrencyPrice' => $baseDir . '/app/Models/CurrencyPrice.php',
@@ -166,6 +169,7 @@ return array(
     'Cron\\MinutesField' => $vendorDir . '/dragonmantank/cron-expression/src/Cron/MinutesField.php',
     'Cron\\MonthField' => $vendorDir . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
     'Database\\Factories\\UserFactory' => $baseDir . '/database/factories/UserFactory.php',
+    'Database\\Seeders\\AccountTypeSeeder' => $baseDir . '/database/seeders/AccountTypeSeeder.php',
     'Database\\Seeders\\CapitalAndRiskMgmtSeeder' => $baseDir . '/database/seeders/CapitalAndRiskMgmtSeeder.php',
     'Database\\Seeders\\CurrencySeeder' => $baseDir . '/database/seeders/CurrencySeeder.php',
     'Database\\Seeders\\DatabaseSeeder' => $baseDir . '/database/seeders/DatabaseSeeder.php',
@@ -5127,6 +5131,8 @@ return array(
     'SebastianBergmann\\Type\\UnknownType' => $vendorDir . '/sebastian/type/src/type/UnknownType.php',
     'SebastianBergmann\\Type\\VoidType' => $vendorDir . '/sebastian/type/src/type/VoidType.php',
     'SebastianBergmann\\Version' => $vendorDir . '/sebastian/version/src/Version.php',
+    'SheetDB\\Connection' => $vendorDir . '/sheetdb/sheetdb-php/src/Connection.php',
+    'SheetDB\\SheetDB' => $vendorDir . '/sheetdb/sheetdb-php/src/SheetDB.php',
     'Spatie\\Permission\\Commands\\CacheReset' => $vendorDir . '/spatie/laravel-permission/src/Commands/CacheReset.php',
     'Spatie\\Permission\\Commands\\CreatePermission' => $vendorDir . '/spatie/laravel-permission/src/Commands/CreatePermission.php',
     'Spatie\\Permission\\Commands\\CreateRole' => $vendorDir . '/spatie/laravel-permission/src/Commands/CreateRole.php',

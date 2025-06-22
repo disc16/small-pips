@@ -28,6 +28,9 @@ const props = defineProps({
     },
     tradingTime: {
         type: Array
+    },
+    currencyPrice: {
+        type: Array
     }
 });
 
@@ -203,6 +206,7 @@ onMounted(() => {
                                 :user="user"
                                 :action="modalAction"
                                 :tradingTime="tradingTime"
+                                :currencyPrice="currencyPrice"
                                 @clearForm="clearActiveItem"
                                 @editViewedForm="editViewedForm"
                                 @newEntry="newEntry"

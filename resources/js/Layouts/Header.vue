@@ -237,10 +237,17 @@ onMounted(() => {
                                 Profile
                             </DropdownLink>
                             <DropdownLink
+                                v-if="$page.props.auth.user.roles.some(e => e.name == 'User')"
                                 :href="route('trade-settings.edit')"
                             >
                                 Trade Settings
                             </DropdownLink>
+                            <!-- <DropdownLink
+                                v-if="$page.props.auth.user.roles.some(e => e.name == 'Admin')"
+                                :href="route('user-settings.edit')"
+                            >
+                                User Settings
+                            </DropdownLink> -->
                             <DropdownLink
                                 :href="route('logout')"
                                 method="post"

@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'f7e5342e2491057d795c177d3c3fc91603696713',
+        'reference' => 'a9f6072a455b05a925ee2acd3ef0c8585d52ced7',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -417,7 +417,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'f7e5342e2491057d795c177d3c3fc91603696713',
+            'reference' => 'a9f6072a455b05a925ee2acd3ef0c8585d52ced7',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1014,6 +1014,15 @@
             'install_path' => __DIR__ . '/../sebastian/version',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'sheetdb/sheetdb-php' => array(
+            'pretty_version' => '1.0.3',
+            'version' => '1.0.3.0',
+            'reference' => '1cc8d76e6377adcce71f8c58f3de1f2e3a146e8d',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../sheetdb/sheetdb-php',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'spatie/laravel-permission' => array(
             'pretty_version' => '6.10.1',

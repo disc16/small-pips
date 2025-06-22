@@ -8,6 +8,7 @@ use App\Http\Controllers\TradeSettingsController;
 use App\Http\Controllers\MarketInformationController;
 use App\Http\Controllers\CapitalAndRiskMgmtController;
 use App\Http\Controllers\TradingStrategyController;
+use App\Http\Controllers\FMPSheetController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -42,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/trading-strategy', [TradingStrategyController::class, 'store'])->name('trading-strategy.store');
     Route::patch('/trading-strategy', [TradingStrategyController::class, 'update'])->name('trading-strategy.update');
 
+    Route::get('/fmp-source', [FMPSheetController::class, 'index'])->name('fmp-sheet.index');
 
     Route::get('/admin/users', [UserPersonController::class, 'show'])->name('users.show');
     Route::patch('/admin/users', [UserPersonController::class, 'update'])->name('users.update');

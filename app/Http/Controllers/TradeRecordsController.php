@@ -11,6 +11,7 @@ use App\Models\TickerPair;
 use App\Models\CapitalAndRiskMgmt;
 use App\Models\TradingStrategy;
 use App\Models\TradingTime;
+use App\Models\CurrencyPriceToday;
 use Carbon\Carbon;
 
 
@@ -220,7 +221,6 @@ class TradeRecordsController extends Controller
             // if(Carbon::parse($entry_time)->gt(Carbon::parse($datetime)))
             if($entry_time->gte($datetime))
             {
-                \Log::info('waaaaaaaaaaaaaaaaAAAAAAAAA');
                 if($db_time)
                 {
                     // \Log::info('wooooooo .'.$db_time);
@@ -250,6 +250,7 @@ class TradeRecordsController extends Controller
         $strategies = TradingStrategy::where('user_id', auth()->user()->id)->get();
         $capital = CapitalAndRiskMgmt::where('user_id', auth()->user()->id)->first();
         $tradingTime = TradingTime::get();
+        $currencyPrice = CurrencyPriceToday::get();
 
         return [
             'user' => auth()->user()->load(['marketInformation', 'tradingStrategies', 'capitalAndRiskMgmt']),
@@ -257,7 +258,8 @@ class TradeRecordsController extends Controller
             'tickers' => $tickers,
             'capital' => $capital,
             'strategies' => $strategies,
-            'tradingTime' => $tradingTime
+            'tradingTime' => $tradingTime,
+            'currencyPrice'  => $currencyPrice
         ];
      }
 }

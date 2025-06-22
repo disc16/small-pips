@@ -35,6 +35,9 @@ const props = defineProps({
     },
     tradingTime: {
         type: Array
+    },
+    currencyPrice: {
+        type: Array
     }
 });
 
@@ -542,7 +545,10 @@ watch(
         let getTicker = props.tickers.filter(e => e.id == value);
         activeTicker.value = getTicker[0];
 
-               
+        // Get Account Currency Pair Price base on CurrencyPriceToday Model
+        let tickerPrice = props.currencyPrice.filter(e => e.ticker_pair == activeTicker.value.ticker)[0];
+        form.acct_curr_pair_price = tickerPrice.close_price;
+
     },
     { deep: true }
 )
@@ -640,11 +646,15 @@ watch(
                 <!-- Modal content -->
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                     <!-- Modal header -->
-                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    <div 
+                        :class="`flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600
+                         ${form.position == 'Long' ? 'bg-green-800': 'bg-red-800'}
+                        `"
+                    >
+                        <h3 class="text-lg font-semibold text-white dark:text-white">
                             {{ form.title }}
                         </h3>
-                        <button @click="closeModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                        <button @click="closeModal" type="button" class="text-white bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -656,21 +666,16 @@ watch(
                         @submit.prevent="submit"
                         class="mt-6 space-y-6"
                     >
-                        <div class="grid gap-4 mb-4 p-4 grid-cols-5">
-                            <div class="flex justify-start items-center gap-4 col-span-5 ">
+                        <div class="grid gap-4 mb-4 p-4 grid-cols-4">
+                            <div class="flex justify-start items-center gap-4 col-span-4 ">
                                 <h2><strong>Entry Data + Criteria</strong></h2>
                             </div>
 
                             <div>
-                                <InputLabel for="entry_date" value="Entry Date + Time" />
+                                <InputLabel for="entry_date" value="Entry Date" />
 
                                 <div class="relative max-w-sm">
                                     <div class="relative max-w-sm">
-                                        <!-- <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                                            </svg>
-                                        </div> -->
                                         <input 
                                             type="date" 
                                             id="entry_date" 
@@ -679,13 +684,38 @@ watch(
                                             :disabled="!enableField" 
                                         />
                                     </div>
-                                    <!-- <input 
-                                        type="date" 
-                                        id="entry_date" 
-                                        v-model="form.entry_date" 
-                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2 ${!enableField ? 'bg-gray-200' : ''}`"
-                                        :disabled="!enableField" 
-                                    /> -->
+                                    <!-- <div class="relative">
+                                        <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </div>
+                                        <input 
+                                            type="time" 
+                                            id="entry_time" 
+                                            v-model="form.entry_time" 
+                                            :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
+                                            :disabled="!enableField"
+                                        />
+                                    </div> -->
+                                </div>
+
+                                <InputError class="mt-2" :message="form.errors.entry_date" />
+                            </div>
+
+                            <div>
+                                <InputLabel for="entry_date" value="Entry Time" />
+
+                                <div class="relative max-w-sm">
+                                    <!-- <div class="relative max-w-sm">
+                                        <input 
+                                            type="date" 
+                                            id="entry_date" 
+                                            v-model="form.entry_date" 
+                                            :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full mb-2 ${!enableField ? 'bg-gray-200' : ''}`"
+                                            :disabled="!enableField" 
+                                        />
+                                    </div> -->
                                     <div class="relative">
                                         <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                                             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
@@ -700,16 +730,9 @@ watch(
                                             :disabled="!enableField"
                                         />
                                     </div>
-                                    <!-- <input 
-                                        type="time" 
-                                        id="entry_time" 
-                                        v-model="form.entry_time" 
-                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
-                                        :disabled="!enableField"
-                                    /> -->
                                 </div>
 
-                                <InputError class="mt-2" :message="form.errors.first_name" />
+                                <InputError class="mt-2" :message="form.errors.entry_time" />
                             </div>
 
                             <div>
@@ -728,17 +751,6 @@ watch(
                             </div>
 
                             <div>
-                                <InputLabel for="orderType" value="Order Type" />
-
-                                <SelectInput id="orderType" v-model="form.order_type" required :disabled="!enableField" >
-                                    <!-- <option disabled value="" selected>Please select Ticker</option> -->
-                                    <option v-for="(type, index) in orderTypes" :key="index"  >{{ type }}</option>
-                                </SelectInput>
-
-                                <InputError class="mt-2" :message="form.errors.order_type" />
-                            </div>
-
-                            <div>
                                 <InputLabel for="positon" value="Position" />
 
                                 <SelectInput id="position" v-model="form.position" required :disabled="!enableField" >
@@ -750,33 +762,14 @@ watch(
                             </div>
 
                             <div>
-                                <InputLabel for="stockSentiment" value="Stock Market Sentiment" />
+                                <InputLabel for="orderType" value="Order Type" />
 
-                                <SelectInput id="stockSentiment" v-model="form.stock_sentiment" required :disabled="!enableField" >
+                                <SelectInput id="orderType" v-model="form.order_type" required :disabled="!enableField" >
                                     <!-- <option disabled value="" selected>Please select Ticker</option> -->
-                                    <option v-for="(sentiment, index) in sentiments" :key="index"  >{{ sentiment }}</option>
+                                    <option v-for="(type, index) in orderTypes" :key="index"  >{{ type }}</option>
                                 </SelectInput>
 
-                                <InputError class="mt-2" :message="form.errors.stock_sentiment" />
-                            </div>
-
-                            <div>
-                                <InputLabel for="purrchasePrice" value="Account Currency Pair Price" />
-
-                                <TextInput
-                                    id="purrchasePrice"
-                                    name="purrchasePrice"
-                                    type="number"
-                                    step="any"
-                                    class="mt-1 block w-full"
-                                    v-model="form.acct_curr_pair_price"
-                                    required
-                                    autofocus
-                                    autocomplete="purrchasePrice"
-                                    :disabled="!enableField" 
-                                />
-
-                                <InputError class="mt-2" :message="form.errors.acct_curr_pair_price" />
+                                <InputError class="mt-2" :message="form.errors.order_type" />
                             </div>
 
                             <div>
@@ -805,7 +798,7 @@ watch(
                             </div>
 
                             <div>
-                                <InputLabel for="ecResult" value="EC Result" />
+                                <InputLabel for="ecResult" value="Economic Data Result" />
 
                                 <TextInput
                                     id="ecResult"
@@ -834,13 +827,26 @@ watch(
                                 <InputError class="mt-2" :message="form.errors.trade_sentiment" />
                             </div>
 
+                            <div>
+                                <InputLabel for="stockSentiment" value="Stock Market Sentiment" />
 
+                                <SelectInput id="stockSentiment" v-model="form.stock_sentiment" required :disabled="!enableField" >
+                                    <!-- <option disabled value="" selected>Please select Ticker</option> -->
+                                    <option v-for="(sentiment, index) in sentiments" :key="index"  >{{ sentiment }}</option>
+                                </SelectInput>
+
+                                <InputError class="mt-2" :message="form.errors.stock_sentiment" />
+                            </div>
+
+                            
+
+                            
         <!-- *************** -->
         <!-- Risk Management -->
         <!-- *************** -->
 
 
-                            <div class="flex my-4 justify-start items-center gap-4 col-span-5 ">
+                            <div class="flex my-4 justify-start items-center gap-4 col-span-4 ">
                                 <h2><strong>Risk Management</strong></h2>
                             </div>
 
@@ -903,7 +909,26 @@ watch(
                             </div>
 
                             <div>
-                                <InputLabel for="lots" value="Shares/Lots" />
+                                <InputLabel for="purrchasePrice" value="Account Currency Pair Price" />
+
+                                <TextInput
+                                    id="purrchasePrice"
+                                    name="purrchasePrice"
+                                    type="number"
+                                    step="any"
+                                    class="mt-1 block w-full"
+                                    v-model="form.acct_curr_pair_price"
+                                    required
+                                    autofocus
+                                    autocomplete="purrchasePrice"
+                                    :disabled="!enableField" 
+                                />
+
+                                <InputError class="mt-2" :message="form.errors.acct_curr_pair_price" />
+                            </div>
+
+                            <div>
+                                <InputLabel for="lots" value="Vol/Lot" />
 
                                 <TextInput
                                     id="lots"
@@ -915,6 +940,22 @@ watch(
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.lots" />
+                            </div>
+
+                            <div>
+                                <InputLabel for="riskValue" value="Risk Pips" />
+
+                                <TextInput
+                                    id="riskPips"
+                                    name="riskPips"
+                                    type="number"
+                                    step="any"
+                                    class="mt-1 block w-full bg-gray-200"
+                                    v-model="form.risk_pips"
+                                    disabled
+                                />
+
+                                <InputError class="mt-2" :message="form.errors.risk_pips" />
                             </div>
 
                             <div>
@@ -931,6 +972,21 @@ watch(
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.risk_value" />
+                            </div>
+
+                            <div>
+                                <InputLabel for="percentControl" value="% Control" />
+
+                                <TextInput
+                                    id="percentControl"
+                                    name="percentControl"
+                                    type="text"
+                                    class="mt-1 block w-full bg-gray-200"
+                                    v-model="form.percent_control"
+                                    disabled
+                                />
+
+                                <InputError class="mt-2" :message="form.errors.percent_control" />
                             </div>
 
                             <div>
@@ -993,28 +1049,13 @@ watch(
                                 <InputError class="mt-2" :message="form.errors.target_price_3" />
                             </div>
 
-                            <div>
-                                <InputLabel for="percentControl" value="% Control" />
-
-                                <TextInput
-                                    id="percentControl"
-                                    name="percentControl"
-                                    type="text"
-                                    class="mt-1 block w-full bg-gray-200"
-                                    v-model="form.percent_control"
-                                    disabled
-                                />
-
-                                <InputError class="mt-2" :message="form.errors.percent_control" />
-                            </div>
-
 
         <!-- *************** -->
         <!-- Exit Data (Actual) -->
         <!-- *************** -->
 
         
-                            <div v-show="showField" class="flex my-4 justify-start items-center gap-4 col-span-5 ">
+                            <div v-show="showField" class="flex my-4 justify-start items-center gap-4 col-span-4 ">
                                 <h2><strong>Exit Data (Actual)</strong></h2>
                             </div>
 
@@ -1032,6 +1073,22 @@ watch(
                                 </div>
 
                                 <InputError class="mt-2" :message="form.errors.acutla_exit_date" />
+                            </div>
+
+                            <div v-show="showField" >
+                                <InputLabel for="acutal_exit_time" value="Exit Time" />
+
+                                <div class="relative max-w-sm">
+                                    <input 
+                                        type="time" 
+                                        id="acutal_exit_time" 
+                                        v-model="form.actual_exit_time" 
+                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
+                                        :disabled="!enableField"     
+                                    />
+                                </div>
+
+                                <InputError class="mt-2" :message="form.errors.actual_exit_time" />
                             </div>
 
                             <div v-show="showField" >
@@ -1053,22 +1110,6 @@ watch(
                             </div>
 
                             <div v-show="showField" >
-                                <InputLabel for="actualProfitLoss" value="Profit/Loss Amount" />
-
-                                <TextInput
-                                    id="actualProfitLoss"
-                                    type="number"
-                                    step="any"
-                                    class="mt-1 block w-full bg-gray-200"
-                                    v-model="form.actual_profit_loss"
-                                    required
-                                    disabled
-                                />
-
-                                <InputError class="mt-2" :message="form.errors.actual_profit_loss" />
-                            </div v-show="showField" >
-
-                            <div v-show="showField" >
                                 <InputLabel for="actualActualProfitLoss" value="Actual Profit/Loss Amount" />
 
                                 <TextInput
@@ -1082,37 +1123,6 @@ watch(
                                 />
 
                                 <InputError class="mt-2" :message="form.errors.actual_actual_profit_loss" />
-                            </div>
-
-                            <div v-show="showField" >
-                                <InputLabel for="actual_status" value="Status" />
-
-                                <TextInput
-                                    id="actual_status"
-                                    type="text"
-                                    class="mt-1 block w-full bg-gray-200"
-                                    v-model="form.actual_status"
-                                    required
-                                    disabled
-                                />
-
-                                <InputError class="mt-2" :message="form.errors.actual_status" />
-                            </div>
-
-                            <div v-show="showField" >
-                                <InputLabel for="acutal_exit_time" value="Exit Time" />
-
-                                <div class="relative max-w-sm">
-                                    <input 
-                                        type="time" 
-                                        id="acutal_exit_time" 
-                                        v-model="form.actual_exit_time" 
-                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
-                                        :disabled="!enableField"     
-                                    />
-                                </div>
-
-                                <InputError class="mt-2" :message="form.errors.actual_exit_time" />
                             </div>
 
                             <div v-show="showField" >
@@ -1132,6 +1142,22 @@ watch(
                             </div>
 
                             <div v-show="showField" >
+                                <InputLabel for="actual_reward_ratio" value="Risk Reward Ratio" />
+
+                                <TextInput
+                                    id="actual_reward_ratio"
+                                    type="number"
+                                    step="any"
+                                    class="mt-1 block w-full bg-gray-200"
+                                    v-model="form.actual_reward_ratio"
+                                    required
+                                    disabled
+                                />
+
+                                <InputError class="mt-2" :message="form.errors.actual_reward_ratio" />
+                            </div>
+
+                            <div v-show="showField" >
                                 <InputLabel for="actual_percent_profit_loss" value="% Profit/Loss" />
 
                                 <TextInput
@@ -1148,19 +1174,59 @@ watch(
                             </div>
 
                             <div v-show="showField" >
-                                <InputLabel for="actual_reward_ratio" value="Risk Reward Ratio" />
+                                <InputLabel for="actualProfitLoss" value="Profit/Loss Amount" />
 
                                 <TextInput
-                                    id="actual_reward_ratio"
+                                    id="actualProfitLoss"
                                     type="number"
                                     step="any"
                                     class="mt-1 block w-full bg-gray-200"
-                                    v-model="form.actual_reward_ratio"
+                                    v-model="form.actual_profit_loss"
                                     required
                                     disabled
                                 />
 
-                                <InputError class="mt-2" :message="form.errors.actual_reward_ratio" />
+                                <InputError class="mt-2" :message="form.errors.actual_profit_loss" />
+                            </div v-show="showField" >
+
+                            <div v-show="showField" >
+                                <InputLabel for="actual_status" value="Profit/Loss Pips" />
+
+                                <TextInput
+                                    id="pl_pips"
+                                    type="text"
+                                    class="mt-1 block w-full bg-gray-200"
+                                    value="No data"
+                                    required
+                                    disabled
+                                />
+
+                                <InputError class="mt-2" :message="form.errors.pl_pips" />
+                            </div>
+
+                            <div v-show="showField" >
+                                <InputLabel for="actual_status" value="Status" />
+
+                                <TextInput
+                                    id="actual_status"
+                                    type="text"
+                                    class="mt-1 block w-full bg-gray-200"
+                                    v-model="form.actual_status"
+                                    required
+                                    disabled
+                                />
+
+                                <InputError class="mt-2" :message="form.errors.actual_status" />
+                            </div>
+
+                            <div v-show="showField" >
+                                <InputLabel for="reason" value="Reason" />
+
+                                <SelectInput name="reason" id="reason" v-model="form.reason" :disabled="!enableField" :class="` ${!enableField ? 'bg-gray-200' : ''}`" >
+                                    <option v-for="(reason, index) in reasons" :key="index"  >{{ reason }}</option>
+                                </SelectInput>
+
+                                <InputError class="mt-2" :message="form.errors.system_reward_ratio" />
                             </div>
 
                             <div v-show="showField" >
@@ -1183,7 +1249,7 @@ watch(
         <!-- *************** -->
 
         
-                            <div v-show="showField"  class="flex my-4 justify-start items-center gap-4 col-span-5 ">
+                            <div v-show="showField"  class="flex my-4 justify-start items-center gap-4 col-span-4 ">
                                 <h2><strong>Exit Data (System)</strong></h2>
                             </div>
 
@@ -1201,6 +1267,22 @@ watch(
                                 </div>
 
                                 <InputError class="mt-2" :message="form.errors.acutla_exit_date" />
+                            </div>
+
+                            <div v-show="showField" >
+                                <InputLabel for="system_exit_time" value="Exit Time" />
+
+                                <div class="relative max-w-sm">
+                                    <input 
+                                        type="time" 
+                                        id="system_exit_time" 
+                                        v-model="form.system_exit_time" 
+                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
+                                        :disabled="!enableField" 
+                                    />
+                                </div>
+
+                                <InputError class="mt-2" :message="form.errors.system_exit_time" />
                             </div>
 
                             <div v-show="showField" >
@@ -1237,20 +1319,53 @@ watch(
                                 <InputError class="mt-2" :message="form.errors.system_profit_loss" />
                             </div>
 
-                            <!-- <div v-show="showField" >
-                                <InputLabel for="systemActualProfitLoss" value="Actual Profit/Loss Amount" />
+                            <div v-show="showField" >
+                                <InputLabel for="system_holding_period" value="Holding Period" />
 
                                 <TextInput
-                                    id="systemActualProfitLoss"
+                                    id="system_holding_period"
                                     type="number"
                                     step="any"
-                                    class="mt-1 block w-full"
-                                    v-model="form.system_actual_profit_loss"
+                                    class="mt-1 block w-full bg-gray-200"
+                                    v-model="form.system_holding_period"
                                     required
+                                    disabled
                                 />
 
-                                <InputError class="mt-2" :message="form.errors.system_actual_profit_loss" />
-                            </div> -->
+                                <InputError class="mt-2" :message="form.errors.system_holding_period" />
+                            </div>
+
+                            <div v-show="showField" >
+                                <InputLabel for="system_reward_ratio" value="Risk Reward Ratio" />
+
+                                <TextInput
+                                    id="system_reward_ratio"
+                                    type="number"
+                                    step="any"
+                                    class="mt-1 block w-full bg-gray-200"
+                                    v-model="form.system_reward_ratio"
+                                    required
+                                    disabled
+                                />
+
+                                <InputError class="mt-2" :message="form.errors.system_reward_ratio" />
+                            </div>
+
+                            <div v-show="showField" >
+                                <InputLabel for="system_percent_profit_loss" value="% Profit/Loss" />
+
+                                <TextInput
+                                    id="system_percent_profit_loss"
+                                    type="number"
+                                    step="any"
+                                    class="mt-1 block w-full bg-gray-200"
+                                    v-model="form.system_percent_profit_loss"
+                                    required
+                                    disabled
+                                />
+
+                                <InputError class="mt-2" :message="form.errors.system_percent_profit_loss" />
+                            </div>
 
                             <div v-show="showField" >
                                 <InputLabel for="system_status" value="Status" />
@@ -1273,89 +1388,15 @@ watch(
                                 </div>
                             </div>
 
-                            <div v-show="showField" >
-                                <InputLabel for="system_exit_time" value="Exit Time" />
-
-                                <div class="relative max-w-sm">
-                                    <input 
-                                        type="time" 
-                                        id="system_exit_time" 
-                                        v-model="form.system_exit_time" 
-                                        :class="`rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 mt-1 block w-full  ${!enableField ? 'bg-gray-200' : ''}`" 
-                                        :disabled="!enableField" 
-                                    />
-                                </div>
-
-                                <InputError class="mt-2" :message="form.errors.system_exit_time" />
-                            </div>
-
-                            <div v-show="showField" >
-                                <InputLabel for="system_holding_period" value="Holding Period" />
-
-                                <TextInput
-                                    id="system_holding_period"
-                                    type="number"
-                                    step="any"
-                                    class="mt-1 block w-full bg-gray-200"
-                                    v-model="form.system_holding_period"
-                                    required
-                                    disabled
-                                />
-
-                                <InputError class="mt-2" :message="form.errors.system_holding_period" />
-                            </div>
-
-                            <div v-show="showField" >
-                                <InputLabel for="system_percent_profit_loss" value="% Profit/Loss" />
-
-                                <TextInput
-                                    id="system_percent_profit_loss"
-                                    type="number"
-                                    step="any"
-                                    class="mt-1 block w-full bg-gray-200"
-                                    v-model="form.system_percent_profit_loss"
-                                    required
-                                    disabled
-                                />
-
-                                <InputError class="mt-2" :message="form.errors.system_percent_profit_loss" />
-                            </div>
-
-                            <div v-show="showField" >
-                                <InputLabel for="system_reward_ratio" value="Risk Reward Ratio" />
-
-                                <TextInput
-                                    id="system_reward_ratio"
-                                    type="number"
-                                    step="any"
-                                    class="mt-1 block w-full bg-gray-200"
-                                    v-model="form.system_reward_ratio"
-                                    required
-                                    disabled
-                                />
-
-                                <InputError class="mt-2" :message="form.errors.system_reward_ratio" />
-                            </div>
-
-                            <div v-show="showField" >
-                                <InputLabel for="reason" value="Reason" />
-
-                                <SelectInput name="reason" id="reason" v-model="form.reason" :disabled="!enableField" :class="` ${!enableField ? 'bg-gray-200' : ''}`" >
-                                    <option v-for="(reason, index) in reasons" :key="index"  >{{ reason }}</option>
-                                </SelectInput>
-
-                                <InputError class="mt-2" :message="form.errors.system_reward_ratio" />
-                            </div>
-
                             
-
+                            
 
         <!-- *************** -->
         <!-- Charting and Execution -->
         <!-- *************** -->
 
         
-                            <div class="flex my-2 justify-start items-center gap-4 col-span-5 ">
+                            <div class="flex my-2 justify-start items-center gap-4 col-span-4 ">
                                 <h2><strong>Charting and Execution</strong></h2>
                             </div>
 
@@ -1454,7 +1495,7 @@ watch(
                                 <InputError class="mt-2" :message="form.errors.last_name" />
                             </div> -->
 
-                            <div class="flex justify-end items-center gap-4 col-span-5 ">
+                            <div class="flex justify-end items-center gap-4 col-span-4 ">
                                 <PrimaryButton
                                     v-show="props.action != 'view'"
                                     :class="{ 'opacity-25': form.processing }"
@@ -1471,19 +1512,6 @@ watch(
                                     Update
                                 </SecondaryButton>
 
-                                <!-- <Transition
-                                    enter-active-class="transition ease-in-out"
-                                    enter-from-class="opacity-0"
-                                    leave-active-class="transition ease-in-out"
-                                    leave-to-class="opacity-0"
-                                >
-                                    <p
-                                        v-if="form.recentlySuccessful"
-                                        class="text-sm text-gray-600"
-                                    >
-                                        Saved.
-                                    </p>
-                                </Transition> -->
                             </div>
                         </div>
                     </form>
