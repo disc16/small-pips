@@ -81,4 +81,22 @@ class TradeSettingsController extends Controller
     {
         //
     }
+
+    public function afterRegistration(Request $request)
+    {
+        $user = User::with('marketInformation.accountType', 'tradingStrategies')->where('id', auth()->user()->id)->first();
+        $currencies = Currency::get();
+        $accounts = AccountType::get();
+        $capitals = CapitalAndRiskMgmt::where('user_id', auth()->user()->id)->get();
+        $strategies = TradingStrategy::where('user_id', auth()->user()->id)->get();
+        // $request->user()->marketInformation;
+
+        return Inertia::render('Auth/AfterRegistrationSettings', [
+            'user' => $user,
+            'currencies' => $currencies,
+            'accounts' => $accounts,
+            'capitals' => $capitals,
+            'strategies' => $strategies,
+        ]);
+    }
 }

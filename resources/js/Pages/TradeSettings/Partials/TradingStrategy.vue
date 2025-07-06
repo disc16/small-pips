@@ -142,7 +142,7 @@ const submitForm = ((isEditing) => {
 
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center justify-center gap-4">
                 <PrimaryButton 
                     v-if="!editForm"
                     class="bg-blue-800 hover:bg-blue-600 w-40 justify-center" 

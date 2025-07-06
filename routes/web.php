@@ -9,6 +9,7 @@ use App\Http\Controllers\MarketInformationController;
 use App\Http\Controllers\CapitalAndRiskMgmtController;
 use App\Http\Controllers\TradingStrategyController;
 use App\Http\Controllers\FMPSheetController;
+use App\Http\Controllers\EconomicIndicatorsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,7 +27,11 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+
 Route::middleware('auth')->group(function () {
+    Route::get('/additional-registration-settings', [TradeSettingsController::class, 'afterRegistration'])->name('afterRegistrationSettings');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -47,6 +52,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/users', [UserPersonController::class, 'show'])->name('users.show');
     Route::patch('/admin/users', [UserPersonController::class, 'update'])->name('users.update');
+
+    Route::get('/admin/trading-indicators', [EconomicIndicatorsController::class, 'index'])->name('indicators.index');
+    Route::post('/admin/trading-indicators', [EconomicIndicatorsController::class, 'store'])->name('economic-indicators.store');
+    Route::patch('/admin/trading-indicators', [EconomicIndicatorsController::class, 'update'])->name('economic-indicators.update');
 
 });
 

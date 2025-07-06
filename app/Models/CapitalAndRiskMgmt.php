@@ -11,6 +11,7 @@ class CapitalAndRiskMgmt extends Model
         'targets' => 'array'
     ];
 
+    protected $fillable = ['user_id', 'capital'];
 
     public function user(): belongsTo
     {

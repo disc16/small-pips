@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\EconomicIndicators;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class EconomicIndicatorsController extends Controller
 {
@@ -12,7 +16,11 @@ class EconomicIndicatorsController extends Controller
      */
     public function index()
     {
-        //
+        $indicators = EconomicIndicators::all();
+
+        return Inertia::render('Admin/TradingIndicators', [
+            'indicators' => $indicators
+        ]);
     }
 
     /**
@@ -28,7 +36,15 @@ class EconomicIndicatorsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = new EconomicIndicators;
+        $data->name = $request->name;
+        $data->group = $request->group;
+        $data->save();
+
+
+        return Redirect::route('indicators.index', [
+            'indicators' => EconomicIndicators::all(),
+        ]);
     }
 
     /**
@@ -36,7 +52,7 @@ class EconomicIndicatorsController extends Controller
      */
     public function show(EconomicIndicators $economicIndicators)
     {
-        //
+        
     }
 
     /**
@@ -52,7 +68,14 @@ class EconomicIndicatorsController extends Controller
      */
     public function update(Request $request, EconomicIndicators $economicIndicators)
     {
-        //
+        $data = EconomicIndicators::where('id', $request->id)->first();
+        $data->name = $request->name;
+        $data->group = $request->group;
+        $data->save();
+
+        return Redirect::route('indicators.index', [
+            'indicators' => EconomicIndicators::all(),
+        ]);
     }
 
     /**

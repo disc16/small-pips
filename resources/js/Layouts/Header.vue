@@ -242,12 +242,12 @@ onMounted(() => {
                             >
                                 Trade Settings
                             </DropdownLink>
-                            <!-- <DropdownLink
+                            <DropdownLink
                                 v-if="$page.props.auth.user.roles.some(e => e.name == 'Admin')"
-                                :href="route('user-settings.edit')"
+                                :href="route('indicators.index')"
                             >
-                                User Settings
-                            </DropdownLink> -->
+                                Trading Indicators
+                            </DropdownLink>
                             <DropdownLink
                                 :href="route('logout')"
                                 method="post"

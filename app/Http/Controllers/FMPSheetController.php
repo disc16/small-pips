@@ -20,33 +20,6 @@ class FMPSheetController extends Controller
      */
     public function index()
     {
-        $data = [];
-        // $sheetdb = new SheetDB('cdl13mmf3wuur', 'fmp_api');
-        // \Log::info(var_export($sheetdb->get(), true));
-        // $data = $sheetdb->get();
-
-        // Clear table
-        // FMPSheet::truncate();
-        
-        foreach ($data as $key => $value) {
-            // \Log::info(var_export($value, true));
-            // \Log::info($value['Ticker_Pair']);
-
-            // $entry = new FMPSheet;
-            // $entry->ticker_pair = $value->Ticker_Pair;
-            // $entry->ticker = $value->ticker;
-            // $entry->bid = $value->bid;
-            // $entry->ask = $value->ask;
-            // $entry->open = $value->open;
-            // $entry->low = $value->low;
-            // $entry->high = $value->high;
-            // $entry->changes = $value->changes;
-            // $entry->date = $value->date;
-            // $entry->save();
-
-            
-        }
-
         $data = $this->saveCurrencyPriceToday();
 
         return Inertia::render('Source/FMP', $data);
@@ -81,7 +54,7 @@ class FMPSheetController extends Controller
             $latestToday = CurrencyPriceToday::latest('id')->first();
             if($latestToday != null && Carbon::today() > Carbon::parse($latestToday['date']))
             {
-                \Log::info('Saving to currency pirce all');
+                \Log::info('Saving to currency price all');
                 // So if new day, then add data to CurrencyPriceAll
 
                 // Do another check if ticker and date already exist. To avoid multiple inputs
@@ -125,7 +98,15 @@ class FMPSheetController extends Controller
 
         }
 
-        return ['today' => $countToday, 'all' => $countAll];
+        $todayData = CurrencyPriceToday::get();
+        $allData = CurrencyPriceAll::get();
+
+        return [
+            'today' => $countToday, 
+            'all' => $countAll,
+            'todayData' => $todayData,
+            'allData' => $allData
+        ];
     }
 
     public function saveCurrencyPriceAll($value, $fmpData, $base, $qoute, $origPair, $jpyPair, $closePrice, $prevClose, $percentChange)

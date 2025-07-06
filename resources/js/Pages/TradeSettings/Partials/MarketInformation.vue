@@ -26,8 +26,8 @@ const accounts = props.accounts;
 console.log('props', props, usePage().props);
 
 const form = useForm({
-    account_type: user.market_information.account_type_id,
-    currency: user.market_information.currency_id,
+    account_type: user.market_information ? user.market_information.account_type_id : 1,
+    currency: user.market_information ? user.market_information.currency_id : 1,
     user_type: usePage().props.auth.roles.filter(e => e != 'User')[0]
 });
 

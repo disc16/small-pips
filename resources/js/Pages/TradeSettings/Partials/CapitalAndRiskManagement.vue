@@ -121,8 +121,6 @@ const submitForm = ((isEditing) => {
         cancelEditing();
         
     }
-
-    
 })
 
 </script>
@@ -299,7 +297,7 @@ const submitForm = ((isEditing) => {
                 
 
                 <PrimaryButton 
-                    v-else-if="editForm && hasPermission('journal-multiple-accounts')"
+                    v-else-if="editForm"
                     class="bg-orange-800 hover:bg-orange-600 w-40 justify-center" 
                     :disabled="form.processing"
                 >
