@@ -196,10 +196,10 @@ const closeModal = () => {
                                             {{ user.email }}
                                         </th>
                                         <td class="px-6 py-4">
-                                            {{ user.user_person.first_name }}
+                                            {{ user?.user_person?.first_name }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            {{ user.user_person.last_name }}
+                                            {{ user?.user_person?.last_name }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             <p

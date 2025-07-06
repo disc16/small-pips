@@ -13,6 +13,7 @@ use Illuminate\Validation\Rules;
 use App\Models\CapitalAndRiskMgmt;
 use App\Models\MarketInformation;
 use App\Models\TradingStrategy;
+use App\Models\UserPerson;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -34,16 +35,28 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'firstname' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
+            'name' => $request->firstname.' '.$request->lastname,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // UserPerson::create([
+        //     'user_id' => $user->id, 
+        //     'first_name' => $request->firstname,
+        //     'last_name' => $request->lastname
+        // ]);
+        $person = new UserPerson;
+        $person->user_id = $user->id;
+        $person->first_name = $request->firstname;
+        $person->last_name = $request->lastname;
+        $person->save();
+
 
         $user->assignRole(['User', 'Basic']);
 

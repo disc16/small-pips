@@ -11,6 +11,11 @@ class UserPerson extends Model
 {
     protected $table = 'user_person';
 
+    protected $fillable = [
+        'firstname',
+        'lastname',
+    ];
+
     public function user(): belongsTo
     {
         return $this->belongsTo(User::class);
