@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('user_types', function (Blueprint $table) {
             $table->id();
+            $table->string('user_type');
+            $table->string('pricing');
             $table->timestamps();
         });
     }

@@ -10,6 +10,7 @@ use App\Http\Controllers\CapitalAndRiskMgmtController;
 use App\Http\Controllers\TradingStrategyController;
 use App\Http\Controllers\FMPSheetController;
 use App\Http\Controllers\EconomicIndicatorsController;
+use App\Http\Controllers\UserTypeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -52,6 +53,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/users', [UserPersonController::class, 'show'])->name('users.show');
     Route::patch('/admin/users', [UserPersonController::class, 'update'])->name('users.update');
+    Route::patch('/admin/user-types', [UserTypeController::class, 'update'])->name('user-types.update');
 
     Route::get('/admin/trading-indicators', [EconomicIndicatorsController::class, 'index'])->name('indicators.index');
     Route::post('/admin/trading-indicators', [EconomicIndicatorsController::class, 'store'])->name('economic-indicators.store');

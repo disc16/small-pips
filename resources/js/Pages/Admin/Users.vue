@@ -51,14 +51,14 @@ const closeModal = () => {
 </script>
 
 <template>
-    <Head title="Users" />
+    <Head title="User Settings" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2
                 class="text-xl font-semibold leading-tight text-gray-800"
             >
-                Users
+                User Information
             </h2>
 
             <!-- Modal toggle -->

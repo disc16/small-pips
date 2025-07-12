@@ -199,7 +199,7 @@ watch(
 
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center justify-center gap-4">
                 <PrimaryButton 
                     v-if="props.actions == 'edit' || hasPermission('journal-multiple-accounts')"
                     class="bg-green-800 hover:bg-green-600 w-40 justify-center" 

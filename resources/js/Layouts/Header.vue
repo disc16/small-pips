@@ -150,10 +150,10 @@ onMounted(() => {
                         </transition>
                     </Popover>
                     <Popover v-if="$page.props.auth.user.roles.some(e => e.name == 'Admin')" class="relative inline-flex items-center">
-                        <PopoverButton class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
+                        <!-- <PopoverButton class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
                             Users
                             <ChevronDownIcon class="size-5 flex-none text-gray-400" aria-hidden="true" />
-                        </PopoverButton>
+                        </PopoverButton> -->
 
                         <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-1" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-1">
                             <PopoverPanel class="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5">
@@ -247,6 +247,12 @@ onMounted(() => {
                                 :href="route('indicators.index')"
                             >
                                 Trading Indicators
+                            </DropdownLink>
+                            <DropdownLink
+                                v-if="$page.props.auth.user.roles.some(e => e.name == 'Admin')"
+                                :href="route('users.show')"
+                            >
+                                User Settings
                             </DropdownLink>
                             <DropdownLink
                                 :href="route('logout')"

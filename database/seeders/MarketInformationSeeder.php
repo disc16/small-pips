@@ -16,7 +16,7 @@ class MarketInformationSeeder extends Seeder
         MarketInformation::create([
             'user_id' => 1,
             // 'account_type' => 'Basic',
-            'trading_account' => 'Default',
+            // 'trading_account' => 'Default',
             'account_type_id' => 1,
             'currency_id' => 8
         ]);
@@ -24,7 +24,7 @@ class MarketInformationSeeder extends Seeder
         MarketInformation::create([
             'user_id' => 2,
             // 'account_type' => 'Basic',
-            'trading_account' => 'Default',
+            // 'trading_account' => 'Default',
             'account_type_id' => 1,
             'currency_id' => 8
         ]);
@@ -32,7 +32,7 @@ class MarketInformationSeeder extends Seeder
         MarketInformation::create([
             'user_id' => 3,
             // 'account_type' => 'Basic',
-            'trading_account' => 'Default',
+            // 'trading_account' => 'Default',
             'account_type_id' => 2,
             'currency_id' => 8
         ]);
